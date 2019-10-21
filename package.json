@@ -1,0 +1,20 @@
+{
+  "name": "kvasigen-studio-system-client",
+  "version": "1.0.0",
+  "description": "Nucular Panther Plant",
+  "main": "index.html",
+  "scripts": {
+    "start": "static .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lug00ber",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "node-static": "^0.7.11"
+  }
+}
