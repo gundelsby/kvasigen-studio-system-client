@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Kvasigen Studio System Client</title>
-    <link rel="stylesheet" href="styles/index.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles/index.css" />
+  </head>
+  <body>
     <h1>Kvasigen Studio System</h1>
     <section>
-        <h2>Connect to server</h2>
-        <form data-type="connect">
-            <label>
-                <span>URL to the sync server</span>
-                <input type="url" placeholder="http://localhost:9001">
-            </label>
-            <button type="submit">Connect</button>
-        </form>  
+      <h2>Connect to server</h2>
+      <form data-type="connect">
+        <label>
+          <span>URL to the sync server</span>
+          <input name="url" type="url" placeholder="ws://localhost:9001" />
+        </label>
+        <button type="submit">Connect</button>
+      </form>
     </section>
     <script type="module" src="scripts/index.js"></script>
-</body>
+  </body>
 </html>
