@@ -1,6 +1,28 @@
 {
+  "env": {
+    "es6": true,
+    "browser": true,
+    "mocha": true
+  },
+  "extends": ["eslint:recommended", "prettier"],
+  "parserOptions": {
+    "ecmaVersion": 2019,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    },
+    "sourceType": "module"
+  },
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "no-console": "off",
+    "no-unused-vars": ["error", { "ignoreRestSiblings": true }],
+    "sort-imports": [
+      "warn",
+      {
+        "ignoreCase": true,
+        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+      }
+    ]
   }
 }
