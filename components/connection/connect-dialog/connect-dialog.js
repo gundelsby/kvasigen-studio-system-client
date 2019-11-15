@@ -1,18 +1,22 @@
 import WebSocketConnection from '../../../scripts/network/websockets/connection.js';
 
-const innerHTML = `<label>
+const innerHTML = `<h2>Connect to server</h2>
+  <form>
+    <label>
       <span>URL to the sync server</span>
       <input name="url" type="url" placeholder="ws://localhost:9001" />
     </label>
-    <button type="submit">Connect</button>`;
+    <button type="submit">Connect</button>
+  </form>`;
 
-class StatusMessage extends HTMLElement {
+class ConnectDialog extends HTMLElement {
   constructor() {
     super();
 
     const shadowRoot = this.attachShadow({ mode: 'closed' });
-    this.form = shadowRoot.appendChild(document.createElement('form'));
-    this.form.innerHTML = innerHTML;
+    shadowRoot.innerHTML = innerHTML;
+
+    this.form = shadowRoot.querySelector('form');
   }
 
   connectedCallback() {
@@ -40,4 +44,4 @@ class StatusMessage extends HTMLElement {
   }
 }
 
-customElements.define('connect-dialog', StatusMessage);
+customElements.define('connect-dialog', ConnectDialog);
