@@ -1,8 +1,7 @@
 {
   "env": {
-    "es6": true,
-    "browser": true,
-    "mocha": true
+    "2019": true,
+    "browser": true
   },
   "extends": ["eslint:recommended", "prettier"],
   "parserOptions": {
@@ -24,5 +23,13 @@
         "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*-test.js"],
+      "env": {
+        "mocha": true
+      }
+    }
+  ]
 }

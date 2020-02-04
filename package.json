@@ -5,8 +5,7 @@
   "main": "index.html",
   "scripts": {
     "start": "static .",
-    "mocha": "mocha --require esm",
-    "test": "npm run mocha -- \"./scripts/**/*-test.js\"",
+    "test": "mocha \"./scripts/**/*-test.js\"",
     "test:watch": "npm run test -- -w --reporter min"
   },
   "author": "lug00ber",
