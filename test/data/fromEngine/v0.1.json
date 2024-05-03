@@ -1,0 +1,15 @@
+{
+  "availableScenes":
+  [
+      {
+          "id": "Klovnenese",
+          "parameters":
+          [
+              {
+                  "name": "color",
+                  "type": "float4"
+              }
+          ]
+      }
+  ]
+}
