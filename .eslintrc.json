@@ -1,14 +1,10 @@
 {
   "env": {
-    "2019": true,
     "browser": true
   },
   "extends": ["eslint:recommended", "prettier"],
   "parserOptions": {
-    "ecmaVersion": 2019,
-    "ecmaFeatures": {
-      "experimentalObjectRestSpread": true
-    },
+    "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "plugins": ["prettier"],
