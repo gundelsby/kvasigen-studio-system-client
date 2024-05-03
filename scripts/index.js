@@ -1,4 +1,12 @@
 import '../components/studio-app.js';
+import { dataStore } from './state/constants.js';
+import { store } from './state/store.js';
+
+document.dispatchEvent(
+  new CustomEvent(dataStore.STATE_UPDATED, {
+    detail: { state: store.getState() },
+  }),
+);
 
 // app controller init here
 // main event listener/dispatcher .. copy redux? do what?
