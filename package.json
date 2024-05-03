@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Nucular Panther Plant",
   "main": "index.html",
+  "type": "module",
   "scripts": {
     "start": "static .",
     "test": "mocha \"./scripts/**/*-test.js\"",
@@ -11,13 +12,11 @@
   "author": "lug00ber",
   "license": "MIT",
   "devDependencies": {
-    "@sinonjs/referee": "^3.2.0",
-    "eslint": "^6.6.0",
-    "eslint-config-prettier": "^6.5.0",
-    "eslint-plugin-prettier": "^3.1.1",
-    "esm": "^3.2.25",
-    "mocha": "^6.2.2",
-    "prettier": "^1.18.2"
+    "@sinonjs/referee": "^11.0.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "5.1.2",
+    "mocha": "^10.4"
   },
   "dependencies": {
     "node-static": "^0.7.11"

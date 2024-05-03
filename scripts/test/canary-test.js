@@ -1,4 +1,5 @@
-import { assert, refute } from '@sinonjs/referee';
+import referee from '@sinonjs/referee';
+const { assert, refute } = referee;
 
 describe('Test framework self tests', () => {
   it('should assert', () => {
