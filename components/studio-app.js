@@ -1,24 +1,27 @@
-import './connection/connect-dialog/connect-dialog.js';
-import './transport/transport-bar.js';
-import { dataStore } from '../scripts/state/constants.js';
+import connectDialogComponent from './connection/connect-dialog/connect-dialog.js';
+import getLogger from '../scripts/util/logger.js';
+import sceneBrowserComponent from './scene-browser/scene-browser.js';
 
-const innerHTML = `<h1>Kvasigen Studio System</h1>
-<section>
-  <connect-dialog></connect-dialog>
-  <transport-bar></transport-bar>
-</section>
-`;
+const tagName = 'studio-app';
+
+const logger = getLogger(tagName);
+
 class StudioApp extends HTMLElement {
   constructor() {
     super();
 
-    document.addEventListener(dataStore.STATE_UPDATED, (event) => {
-      console.log(event);
-    });
-
     const shadowRoot = this.attachShadow({ mode: 'open' });
-    shadowRoot.innerHTML = innerHTML;
+
+    shadowRoot.appendChild(
+      document.createElement(connectDialogComponent.tagName),
+    );
+    const sceneBrowser = document.createElement(sceneBrowserComponent.tagName);
+    this.shadowRoot.appendChild(sceneBrowser);
+  }
+
+  connectedCallback() {
+    logger.log(`connectedCallback`);
   }
 }
 
-customElements.define('studio-app', StudioApp);
+customElements.define(tagName, StudioApp);

@@ -1,10 +1,17 @@
+import getLogger from '../../../scripts/util/logger.js';
+import { html } from '../../../scripts/util/html.js';
 import WebSocketConnection from '../../../scripts/network/websockets/connection.js';
 
-const innerHTML = `<h2>Connect to server</h2>
+const tagName = 'connect-dialog';
+export default { tagName };
+
+const logger = getLogger(`components:${tagName}`);
+
+const innerHTML = html`<h2>Connect to server</h2>
   <form>
     <label>
       <span>URL to the sync server</span>
-      <input name="url" type="url" placeholder="ws://localhost:9001" />
+      <input name="url" type="url" placeholder="ws://localhost:5246" />
     </label>
     <button type="submit">Connect</button>
   </form>`;
@@ -29,8 +36,12 @@ class ConnectDialog extends HTMLElement {
 
   onsubmitHandler(event) {
     event.preventDefault();
+
+    let urlString =
+      this.elements['url'].value ?? this.elements['url'].placeholder;
+
     try {
-      const url = new URL(this.elements['url'].value);
+      const url = new URL(urlString);
 
       if (url.protocol !== 'ws:') {
         throw new Error('Only websocket connections allowed', url.href);
@@ -38,10 +49,14 @@ class ConnectDialog extends HTMLElement {
       // Create WebSocket connection.
       const connection = new WebSocketConnection();
       connection.open(url);
+      logger.log(`Form submitted, called connection library open`);
     } catch (err) {
-      console.log('fucked up setting up a connection', err);
+      logger.error(
+        `fucked up setting up a connection using url ${urlString}`,
+        err,
+      );
     }
   }
 }
 
-customElements.define('connect-dialog', ConnectDialog);
+customElements.define(tagName, ConnectDialog);
