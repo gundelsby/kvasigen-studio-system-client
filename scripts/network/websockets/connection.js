@@ -1,7 +1,7 @@
 import getLogger from '../../util/logger.js';
 
 const secretHandshake = {
-  challenge: 'I would like to purchase your deadliest gun, please.',
+  challenge: `I'd like to buy your deadliest gun, please.`,
   response: 'Aisle 6, next to the sympathy cards.',
 };
 
@@ -16,7 +16,7 @@ export default class WebSocketConnection {
   openEventHandler() {
     logger.log(`Connection open`);
 
-    this.socket.send(secretHandshake);
+    this.socket.send(secretHandshake.challenge);
     this.handshakeChallengeSent = true;
     logger.log(`Secret handshake challenge sent`);
 
