@@ -5,22 +5,31 @@ const secretHandshake = {
   response: 'Aisle 6, next to the sympathy cards.',
 };
 
+export const EventTypes = {
+  CONNECTION_OPEN: 'websocketconnection-open',
+  CONNECTION_CLOSED: 'websocketconnection-closed',
+};
+
 const logger = getLogger('network:WebSocketConnection');
 
-export default class WebSocketConnection {
-  constructor() {
+export default class WebSocketConnection extends EventTarget {
+  constructor(engineMessageHandler) {
+    super();
+
     this.handshakeChallengeSent = false;
     this.verifiedConnection = false;
+    this.engineMessageHandler = engineMessageHandler;
   }
 
   openEventHandler() {
     logger.log(`Connection open`);
 
+    this.socket.removeEventListener('open', this.openEventHandler);
+    this.dispatchEvent(new CustomEvent(EventTypes.CONNECTION_OPEN));
+
     this.socket.send(secretHandshake.challenge);
     this.handshakeChallengeSent = true;
     logger.log(`Secret handshake challenge sent`);
-
-    this.socket.removeEventListener('open', this.openEventHandler);
   }
 
   messageEventHandler(event) {
@@ -30,9 +39,12 @@ export default class WebSocketConnection {
     ) {
       this.verifiedConnection = true;
       logger.log(`Secret handshake response received, connection secure`);
+      this.handshakeChallengeSent = false;
+      return;
     }
 
     logger.log('Message from server ', event.data);
+    this.engineMessageHandler(event.data);
   }
 
   sendJsonData(data) {
@@ -72,5 +84,10 @@ export default class WebSocketConnection {
     this.socket.removeEventListener('error', logger.error);
 
     this.socket.close(1000, 'kthnxbye!!');
+    this.dispatchEvent(new CustomEvent(EventTypes.CONNECTION_CLOSED));
+  }
+
+  isOpen() {
+    return this.socket && this.socket.OPEN;
   }
 }

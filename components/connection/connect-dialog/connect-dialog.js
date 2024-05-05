@@ -1,6 +1,7 @@
 import getLogger from '../../../scripts/util/logger.js';
 import { html } from '../../../scripts/util/html.js';
 import WebSocketConnection from '../../../scripts/network/websockets/connection.js';
+import noc from '../../../scripts/network/noc.js';
 
 const tagName = 'connect-dialog';
 export default { tagName };
@@ -46,10 +47,8 @@ class ConnectDialog extends HTMLElement {
       if (url.protocol !== 'ws:') {
         throw new Error('Only websocket connections allowed', url.href);
       }
-      // Create WebSocket connection.
-      const connection = new WebSocketConnection();
-      connection.open(url);
       logger.log(`Form submitted, called connection library open`);
+      noc.openEngineConnection(url);
     } catch (err) {
       logger.error(
         `fucked up setting up a connection using url ${urlString}`,

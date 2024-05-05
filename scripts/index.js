@@ -2,24 +2,13 @@ import '../components/studio-app.js';
 import { dataStore } from './state/constants.js';
 import getLogger from './util/logger.js';
 import { store } from './state/store.js';
+import noc, { EVENT_NAMES } from './network/noc.js';
 
 const logger = getLogger(`index.js`);
 
-document.dispatchEvent(
-  new CustomEvent(dataStore.STATE_UPDATED, {
-    detail: { state: store.getState() },
-  }),
-);
-
-document.addEventListener('click', (ev) => {
-  const h1 = document.querySelector('h1');
-  if (ev.target === h1) {
-    document.dispatchEvent(
-      new CustomEvent(dataStore.STATE_UPDATED, {
-        detail: { state: store.getState() },
-      }),
-    );
-  }
+document.addEventListener(EVENT_NAMES.ENGINE_CONNECTED, () => {
+  logger.log(`Engine connected, requesting engine info...`);
+  noc.sendMessageToEngine({ type: 'requestEngineInfo' });
 });
 
 logger.success(`Script initalized`);
