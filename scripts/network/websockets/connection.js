@@ -43,8 +43,13 @@ export default class WebSocketConnection extends EventTarget {
       return;
     }
 
-    logger.log('Message from server ', event.data);
-    this.engineMessageHandler(event.data);
+    try {
+      const jsonData = JSON.parse(event.data);
+      logger.log('Message from server ', jsonData);
+      this.engineMessageHandler(jsonData);
+    } catch (e) {
+      logger.error(`Unable to process server message data`, { error: e });
+    }
   }
 
   sendJsonData(data) {

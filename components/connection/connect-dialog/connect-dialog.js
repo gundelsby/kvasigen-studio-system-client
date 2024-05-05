@@ -1,6 +1,5 @@
 import getLogger from '../../../scripts/util/logger.js';
 import { html } from '../../../scripts/util/html.js';
-import WebSocketConnection from '../../../scripts/network/websockets/connection.js';
 import noc from '../../../scripts/network/noc.js';
 
 const tagName = 'connect-dialog';

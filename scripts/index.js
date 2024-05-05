@@ -1,8 +1,8 @@
 import '../components/studio-app.js';
+import noc, { EVENT_NAMES } from './network/noc.js';
 import { dataStore } from './state/constants.js';
 import getLogger from './util/logger.js';
 import { store } from './state/store.js';
-import noc, { EVENT_NAMES } from './network/noc.js';
 
 const logger = getLogger(`index.js`);
 
