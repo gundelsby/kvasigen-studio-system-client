@@ -1,4 +1,6 @@
+import engineDataActionTypes from '../state/engineData/action-types.js';
 import getLogger from '../util/logger.js';
+import { store } from '../state/store.js';
 
 export default engineMessageHandler;
 
@@ -14,7 +16,10 @@ function engineMessageHandler(message) {
     case messageTypes.engineInfo:
       logger.log(`Received engine info message (typeof ${typeof data})`, data);
       logger.log(`Keys in engineInfo object: ${Object.keys(data).join(', ')}`);
-      //TODO: write action and reducer for handling engineInfo updates
+      store.dispatch({
+        type: engineDataActionTypes.ENGINE_INFO_SERVER_UPDATE,
+        payload: data,
+      });
       break;
     default:
       logger.warn(`Received unknown server message`, { type, data });
