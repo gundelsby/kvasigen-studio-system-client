@@ -14,12 +14,20 @@ function createStore(reducer, initialState) {
     subscribe: (listener) => {
       if (listeners.indexOf(listener) < 0) {
         listeners.push(listener);
+        return function unsubscribe() {
+          const index = listeners.indexOf(listener);
+          listeners.splice(index, 1);
+        };
       }
     },
     dispatch: (action) => {
       logger.log(`Handling action ${action.type}`);
       state = reducer(state, action);
       logger.success(`State updated`, state);
+      listeners.forEach((listener) => listener());
+      logger.log(
+        `Notified ${listeners.length} listeners that the state has changed`,
+      );
     },
   };
 }
