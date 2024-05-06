@@ -1,6 +1,6 @@
-import { dataStore } from '../../scripts/state/constants.js';
 import getLogger from '../../scripts/util/logger.js';
 import { html } from '../../../scripts/util/html.js';
+import { store } from '../../scripts/state/store.js';
 
 const tagName = 'scene-browser';
 
@@ -18,49 +18,50 @@ class SceneBrowser extends HTMLElement {
     const shadowRoot = this.attachShadow({ mode: 'open' });
     shadowRoot.innerHTML = innerHTML;
 
-    document.addEventListener(dataStore.STATE_UPDATED, (e) => {
-      logger.log(`STATE_UPDATED`);
-      stateUpdatedHandler(e, this);
-    });
-
     logger.log('instanced');
   }
 
   connectedCallback() {
     logger.log('connected');
+    this.unSubscribeStore = store.subscribe(() => {
+      this.stateUpdatedHandler();
+    });
+  }
+
+  disconnectedCallback() {
+    this.unSubscribeStore && this.unSubscribeStore();
+  }
+
+  stateUpdatedHandler() {
+    const availableScenes = store.getState().engineData?.availableScenes;
+
+    if (
+      JSON.stringify(availableScenes) === JSON.stringify(this.availableScenes)
+    ) {
+      logger.log(`availableScenes unchanged, not updating item list`);
+      return;
+    }
+
+    if (availableScenes) {
+      this.availableScenes = availableScenes.slice();
+      const ul = this.shadowRoot.querySelector('ul');
+      ul.replaceChildren(
+        ...this.availableScenes.map((scene) => {
+          const li = document.createElement('li');
+          li.classList.add(`${tagName}-item`);
+          li.textContent = scene.id;
+
+          return li;
+        }),
+      );
+
+      logger.success(
+        `availableScenes changed, item list updated`,
+        this.availableScenes,
+        this.shadowRoot,
+      );
+    }
   }
 }
 
 customElements.define(tagName, SceneBrowser);
-
-function stateUpdatedHandler(event, component) {
-  const availableScenes = event?.detail?.state?.engineData?.availableScenes;
-
-  if (
-    JSON.stringify(availableScenes) ===
-    JSON.stringify(component.availableScenes)
-  ) {
-    logger.log(`availableScenes unchanged, not updating item list`);
-    return;
-  }
-
-  if (availableScenes) {
-    component.availableScenes = availableScenes.slice();
-    const ul = component.shadowRoot.querySelector('ul');
-    ul.replaceChildren(
-      ...component.availableScenes.map((scene) => {
-        const li = document.createElement('li');
-        li.classList.add(`${tagName}-item`);
-        li.textContent = scene.id;
-
-        return li;
-      }),
-    );
-
-    logger.success(
-      `availableScenes changed, item list updated`,
-      component.availableScenes,
-      component.shadowRoot,
-    );
-  }
-}
