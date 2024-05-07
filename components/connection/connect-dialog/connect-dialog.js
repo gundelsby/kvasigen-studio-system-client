@@ -10,7 +10,7 @@ const logger = getLogger(`components:${tagName}`);
 const innerHTML = html`<h2>Connect to server</h2>
   <form>
     <label>
-      <span>URL to the sync server</span>
+      <span class="label-text">URL to the sync server</span>
       <input name="url" type="url" placeholder="ws://localhost:5246" />
     </label>
     <button name="submit" type="submit">Connect</button>
@@ -32,9 +32,10 @@ class ConnectDialog extends HTMLElement {
       this.engineConnectedHandler.bind(this),
     );
 
-    document.addEventListener(EVENT_NAMES.ENGINE_DISCONNECTED) {
-      //TODO: reset form to disconnect state
-    }
+    document.addEventListener(
+      EVENT_NAMES.ENGINE_DISCONNECTED,
+      this.engineDisconnectedHandler.bind(this),
+    );
   }
 
   connectedCallback() {
@@ -46,6 +47,7 @@ class ConnectDialog extends HTMLElement {
   }
 
   engineConnectedHandler(event) {
+    logger.log(`engineConnectedHandler this`, this.shadowRoot);
     logger.log(`Engine connected event received`, this.form.elements);
     this.engineIsConnected = true;
 
@@ -56,14 +58,23 @@ class ConnectDialog extends HTMLElement {
 
     const submitButton = this.form.elements['submit'];
     submitButton.textContent = 'Disconnect';
+
     //TODO: change label text
+    const inputLabel = this.shadowRoot.querySelector('.label-text');
+    inputLabel.textContent = 'Connected to';
+  }
+
+  engineDisconnectedHandler(event) {
+    {
+      //TODO: reset form to disconnect state
+    }
   }
 
   onsubmitHandler(event) {
     event.preventDefault();
 
-    if(this.engineIsConnected) {
-      noc.closeEngineConnection()
+    if (this.engineIsConnected) {
+      noc.closeEngineConnection();
     }
 
     let urlString =
