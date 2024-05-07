@@ -53,7 +53,7 @@ export default class WebSocketConnection extends EventTarget {
   }
 
   sendJsonData(data) {
-    if (!this.socket.OPEN) {
+    if (!this.isOpen()) {
       logger.error(`Request to send JSON data, but socket is not open`);
       throw new Error(`Socket is not open, unable to send JSON data`);
     }
@@ -63,7 +63,7 @@ export default class WebSocketConnection extends EventTarget {
   }
 
   open(url) {
-    if (this.socket) {
+    if (this.isOpen()) {
       logger.error(
         `Attempted to open connection to ${url}, but connection is already open to ${this.socket.url}`,
       );
@@ -77,7 +77,15 @@ export default class WebSocketConnection extends EventTarget {
       'message',
       this.messageEventHandler.bind(this),
     );
-    this.socket.addEventListener('error', logger.error);
+    this.socket.addEventListener(
+      'error',
+      this.connectionErrorHandler.bind(this),
+    );
+  }
+
+  connectionErrorHandler(event) {
+    logger.error(`Connection error, closing socket`, { error: event });
+    this.close();
   }
 
   close() {
@@ -86,13 +94,15 @@ export default class WebSocketConnection extends EventTarget {
     }
 
     this.socket.removeEventListener('message', this.messageEventHandler);
-    this.socket.removeEventListener('error', logger.error);
+    this.socket.removeEventListener('error', this.connectionErrorHandler);
 
     this.socket.close(1000, 'kthnxbye!!');
     this.dispatchEvent(new CustomEvent(EventTypes.CONNECTION_CLOSED));
+
+    logger.log(`Connection closed`);
   }
 
   isOpen() {
-    return this.socket && this.socket.OPEN;
+    return this.socket && this.socket.readyState === WebSocket.OPEN;
   }
 }
