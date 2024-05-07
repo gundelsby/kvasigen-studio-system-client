@@ -26,7 +26,9 @@ function createNetworkOperationsCentre() {
       );
       engineConnection.addEventListener(EventTypes.CONNECTION_OPEN, () => {
         logger.success(`Engine connection opened`);
-        document.dispatchEvent(new CustomEvent(EVENT_NAMES.ENGINE_CONNECTED));
+        document.dispatchEvent(
+          new CustomEvent(EVENT_NAMES.ENGINE_CONNECTED, { detail: { url } }),
+        );
       });
       engineConnection.open(url);
       logger.log(`Opening engine connection`);
