@@ -7,13 +7,37 @@ export default { tagName };
 
 const logger = getLogger(`components:${tagName}`);
 
+const textContent = {
+  LABEL_CONNECTED: 'Connected to',
+  LABEL_DISCONNECTED: 'URL to the sync server',
+  SUBMIT_BUTTON_CONNECTED: 'Disconnect',
+  SUBMIT_BUTTON_DISCONNECTED: 'Connect',
+};
+
+const formElementNames = {
+  URL_INPUT: 'url',
+  SUBMIT_BUTTON: 'submit',
+};
+
+const classNames = {
+  URL_INPUT_LABEL: 'label-text',
+};
+
 const innerHTML = html`<h2>Connect to server</h2>
   <form>
     <label>
-      <span class="label-text">URL to the sync server</span>
-      <input name="url" type="url" placeholder="ws://localhost:5246" />
+      <span class="${formElementNames.LABEL}"
+        >${textContent.LABEL_DISCONNECTED}</span
+      >
+      <input
+        name="${formElementNames.URL_INPUT}"
+        type="url"
+        placeholder="ws://localhost:5246"
+      />
     </label>
-    <button name="submit" type="submit">Connect</button>
+    <button name="${formElementNames.SUBMIT_BUTTON}" type="submit">
+      ${textContent.SUBMIT_BUTTON_DISCONNECTED}
+    </button>
   </form>`;
 
 class ConnectDialog extends HTMLElement {
@@ -52,21 +76,32 @@ class ConnectDialog extends HTMLElement {
     this.engineIsConnected = true;
 
     const { url } = event.detail;
-    const urlInput = this.form.elements['url'];
+    const urlInput = this.form.elements[formElementNames.URL_INPUT];
     urlInput.value = url;
     urlInput.disabled = true;
 
-    const submitButton = this.form.elements['submit'];
-    submitButton.textContent = 'Disconnect';
+    const submitButton = this.form.elements[formElementNames.SUBMIT_BUTTON];
+    submitButton.textContent = textContent.SUBMIT_BUTTON_CONNECTED;
 
-    //TODO: change label text
-    const inputLabel = this.shadowRoot.querySelector('.label-text');
-    inputLabel.textContent = 'Connected to';
+    const inputLabel = this.shadowRoot.querySelector(
+      `.${classNames.URL_INPUT_LABEL}`,
+    );
+    inputLabel.textContent = textContent.LABEL_CONNECTED;
   }
 
-  engineDisconnectedHandler(event) {
+  engineDisconnectedHandler() {
     {
-      //TODO: reset form to disconnect state
+      this.engineIsConnected = false;
+      const urlInput = this.form.elements[formElementNames.URL_INPUT];
+      urlInput.disabled = false;
+
+      const submitButton = this.form.elements[formElementNames.SUBMIT_BUTTON];
+      submitButton.textContent = textContent.SUBMIT_BUTTON_DISCONNECTED;
+
+      const inputLabel = this.shadowRoot.querySelector(
+        `.${classNames.URL_INPUT_LABEL}`,
+      );
+      inputLabel.textContent = textContent.LABEL_DISCONNECTED;
     }
   }
 
@@ -78,11 +113,8 @@ class ConnectDialog extends HTMLElement {
     }
 
     let urlString =
-      this.elements['url'].value || this.elements['url'].placeholder;
-
-    logger.log(
-      `url: ${urlString}, value: ${this.elements['url'].value}, placeholder: ${this.elements['url'].placeholder}`,
-    );
+      this.elements[formElementNames.URL_INPUT].value ||
+      this.elements[formElementNames.URL_INPUT].placeholder;
 
     try {
       const url = new URL(urlString);
