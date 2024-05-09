@@ -31,6 +31,14 @@ function createNetworkOperationsCentre() {
           new CustomEvent(EVENT_NAMES.ENGINE_CONNECTED, { detail: { url } }),
         );
       });
+
+      engineConnection.addEventListener(EventTypes.CONNECTION_CLOSED, () => {
+        logger.log(`Engine connection closed`);
+        document.dispatchEvent(
+          new CustomEvent(EVENT_NAMES.ENGINE_DISCONNECTED),
+        );
+      });
+
       engineConnection.open(url);
       logger.log(`Opening engine connection`);
     },

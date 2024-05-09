@@ -63,11 +63,11 @@ class ConnectDialog extends HTMLElement {
   }
 
   connectedCallback() {
-    this.form.addEventListener('submit', this.onsubmitHandler);
+    this.form.addEventListener('submit', this.onsubmitHandler.bind(this));
   }
 
   disconnectedCallback() {
-    this.form.removeEventListener('submit', this.onsubmitHandler);
+    this.form.removeEventListener('submit', this.onsubmitHandler.bind(this));
   }
 
   engineConnectedHandler(event) {
@@ -105,15 +105,19 @@ class ConnectDialog extends HTMLElement {
 
   onsubmitHandler(event) {
     event.preventDefault();
-    //TODO: handle submit in connected mode
+    logger.log(`onSubmitHandler`, this);
 
     if (this.engineIsConnected) {
-      noc.closeEngineConnection();
+      this.submitHandlerDisconnect();
+    } else {
+      this.submitHandlerConnect();
     }
+  }
 
+  submitHandlerConnect() {
     let urlString =
-      this.elements[formElementNames.URL_INPUT].value ||
-      this.elements[formElementNames.URL_INPUT].placeholder;
+      this.form.elements[formElementNames.URL_INPUT].value ||
+      this.form.elements[formElementNames.URL_INPUT].placeholder;
 
     try {
       const url = new URL(urlString);
@@ -129,6 +133,10 @@ class ConnectDialog extends HTMLElement {
         err,
       );
     }
+  }
+
+  submitHandlerDisconnect() {
+    noc.closeEngineConnection();
   }
 }
 
