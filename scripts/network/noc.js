@@ -6,6 +6,7 @@ const logger = getLogger('network:noc');
 
 export const EVENT_NAMES = {
   ENGINE_CONNECTED: 'noc-connected-to-engine',
+  ENGINE_DISCONNECTED: 'noc-disconnected-from-engine',
 };
 
 function createNetworkOperationsCentre() {

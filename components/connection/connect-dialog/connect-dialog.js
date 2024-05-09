@@ -26,7 +26,7 @@ const classNames = {
 const innerHTML = html`<h2>Connect to server</h2>
   <form>
     <label>
-      <span class="${formElementNames.LABEL}"
+      <span class="${classNames.URL_INPUT_LABEL}"
         >${textContent.LABEL_DISCONNECTED}</span
       >
       <input
@@ -44,7 +44,7 @@ class ConnectDialog extends HTMLElement {
   constructor() {
     super();
 
-    const shadowRoot = this.attachShadow({ mode: 'closed' });
+    const shadowRoot = this.attachShadow({ mode: 'open' });
     shadowRoot.innerHTML = innerHTML;
 
     this.form = shadowRoot.querySelector('form');
@@ -71,8 +71,6 @@ class ConnectDialog extends HTMLElement {
   }
 
   engineConnectedHandler(event) {
-    logger.log(`engineConnectedHandler this`, this.shadowRoot);
-    logger.log(`Engine connected event received`, this.form.elements);
     this.engineIsConnected = true;
 
     const { url } = event.detail;
@@ -107,6 +105,7 @@ class ConnectDialog extends HTMLElement {
 
   onsubmitHandler(event) {
     event.preventDefault();
+    //TODO: handle submit in connected mode
 
     if (this.engineIsConnected) {
       noc.closeEngineConnection();
