@@ -1,15 +1,21 @@
 {
-  "availableScenes":
-  [
-      {
-          "id": "Klovnenese",
-          "parameters":
-          [
-              {
-                  "name": "color",
-                  "type": "float4"
-              }
-          ]
-      }
+  "availableScenes": [
+    {
+      "id": "Klovnenese",
+      "parameters": [
+        {
+          "name": "backgroundColor",
+          "type": "float4",
+          "usedFor": "color",
+          "canAutomate": false
+        },
+        {
+          "name": "camera1Pos",
+          "type": "vec3",
+          "usedFor": "position",
+          "canAutomate": true
+        }
+      ]
+    }
   ]
 }
