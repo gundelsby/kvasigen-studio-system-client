@@ -1,6 +1,6 @@
-import getLogger from '../../scripts/util/logger.js';
+import getLogger from '../../util/logger.js';
 import { html } from '../../../scripts/util/html.js';
-import { store } from '../../scripts/state/store.js';
+import { store } from '../../state/store.js';
 
 const tagName = 'scene-browser';
 

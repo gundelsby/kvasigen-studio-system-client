@@ -1,4 +1,4 @@
-import '../components/studio-app.js';
+import './components/index.js';
 import noc, { EVENT_NAMES } from './network/noc.js';
 import getLogger from './util/logger.js';
 

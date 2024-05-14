@@ -1,5 +1,5 @@
-import getLogger from '../../scripts/util/logger.js';
-import { html } from '../../scripts/util/html.js';
+import getLogger from '../../util/logger.js';
+import { html } from '../../util/html.js';
 
 const tagName = 'running-order';
 

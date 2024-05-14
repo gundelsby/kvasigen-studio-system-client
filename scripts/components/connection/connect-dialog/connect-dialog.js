@@ -1,6 +1,6 @@
-import noc, { EVENT_NAMES } from '../../../scripts/network/noc.js';
-import getLogger from '../../../scripts/util/logger.js';
-import { html } from '../../../scripts/util/html.js';
+import noc, { EVENT_NAMES } from '../../../network/noc.js';
+import getLogger from '../../../util/logger.js';
+import { html } from '../../../util/html.js';
 
 const tagName = 'connect-dialog';
 export default { tagName };
