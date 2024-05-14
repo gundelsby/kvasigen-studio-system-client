@@ -23,22 +23,21 @@ const classNames = {
   URL_INPUT_LABEL: 'label-text',
 };
 
-const innerHTML = html`<h2>Connect to server</h2>
-  <form>
-    <label>
-      <span class="${classNames.URL_INPUT_LABEL}"
-        >${textContent.LABEL_DISCONNECTED}</span
-      >
-      <input
-        name="${formElementNames.URL_INPUT}"
-        type="url"
-        placeholder="ws://localhost:5246"
-      />
-    </label>
-    <button name="${formElementNames.SUBMIT_BUTTON}" type="submit">
-      ${textContent.SUBMIT_BUTTON_DISCONNECTED}
-    </button>
-  </form>`;
+const innerHTML = html`<form>
+  <label>
+    <span class="${classNames.URL_INPUT_LABEL}"
+      >${textContent.LABEL_DISCONNECTED}</span
+    >
+    <input
+      name="${formElementNames.URL_INPUT}"
+      type="url"
+      placeholder="ws://localhost:5246"
+    />
+  </label>
+  <button name="${formElementNames.SUBMIT_BUTTON}" type="submit">
+    ${textContent.SUBMIT_BUTTON_DISCONNECTED}
+  </button>
+</form>`;
 
 class ConnectDialog extends HTMLElement {
   constructor() {
