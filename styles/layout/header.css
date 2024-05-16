@@ -1,0 +1,14 @@
+header {
+  display: flex;
+  align-items: center;
+}
+
+header h1,
+header connect-dialog {
+  flex: 1;
+  border: 1px solid red;
+}
+
+header h1 {
+  margin: 0;
+}

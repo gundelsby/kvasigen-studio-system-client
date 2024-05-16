@@ -1,0 +1,26 @@
+@import 'header.css';
+@import 'main.css';
+@import 'footer.css';
+
+html {
+  box-sizing: border-box;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  box-sizing: border-box;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+header,
+footer {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+main {
+  flex-grow: 1;
+}

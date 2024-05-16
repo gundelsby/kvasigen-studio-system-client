@@ -1,5 +1,5 @@
 @import './colorscheme.css';
-@import './footer.css';
+@import './layout/layout.css';
 
 body {
   background: var(--bg-main);
