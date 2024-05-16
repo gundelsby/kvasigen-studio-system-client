@@ -3,13 +3,19 @@ import { html } from '../../util/html.js';
 
 const tagName = 'running-order';
 
+const classNames = {
+  DROP_TARGET: 'drop-target',
+};
+
 export default { tagName };
 
 const logger = getLogger(`components:${tagName}`);
 
 // scene instances goes here
 const content = html`<section class="running-order">
-  <div class="drop-target">Drop scenes here to add to running order</div>
+  <div class="${classNames.DROP_TARGET}">
+    Drop scenes here to add to running order
+  </div>
 </section>`;
 
 class RunningOrder extends HTMLElement {
@@ -18,16 +24,18 @@ class RunningOrder extends HTMLElement {
 
     const shadowRoot = this.attachShadow({ mode: 'open' });
     shadowRoot.innerHTML = content;
+
+    this.scenes = [];
   }
 
   connectedCallback() {
     logger.log(`Connected`);
 
-    this.addEventListener('drop', (ev) => {
-      this.sceneDropHandler(ev);
+    this.addEventListener('drop', (event) => {
+      this.sceneDropHandler(event);
     });
-    this.addEventListener('dragover', (ev) => {
-      this.sceneDropHandler(ev);
+    this.addEventListener('dragover', (event) => {
+      event.preventDefault();
     });
   }
 
@@ -36,12 +44,13 @@ class RunningOrder extends HTMLElement {
 
     const { dataTransfer } = event;
     if (!dataTransfer) {
-      logger.warn(`No dataTransfer prop in drag event`);
+      logger.warn(`No dataTransfer prop in drop event`);
     }
-    for (const type of dataTransfer.types) {
-      const data = dataTransfer.getData(type);
-      logger.log(`Data for type ${type}`, { type: typeof data, data });
-    }
+
+    const newScene = JSON.parse(dataTransfer.getData('text/plain'));
+    this.scenes.push(newScene);
+    logger.log(`Added new scene to running order`, { ...newScene });
+    logger.log(`Number of scenes in running order: ${this.scenes.length}`);
   }
 }
 
