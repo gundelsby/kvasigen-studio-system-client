@@ -22,6 +22,26 @@ class RunningOrder extends HTMLElement {
 
   connectedCallback() {
     logger.log(`Connected`);
+
+    this.addEventListener('drop', (ev) => {
+      this.sceneDropHandler(ev);
+    });
+    this.addEventListener('dragover', (ev) => {
+      this.sceneDropHandler(ev);
+    });
+  }
+
+  sceneDropHandler(event) {
+    event.preventDefault();
+
+    const { dataTransfer } = event;
+    if (!dataTransfer) {
+      logger.warn(`No dataTransfer prop in drag event`);
+    }
+    for (const type of dataTransfer.types) {
+      const data = dataTransfer.getData(type);
+      logger.log(`Data for type ${type}`, { type: typeof data, data });
+    }
   }
 }
 

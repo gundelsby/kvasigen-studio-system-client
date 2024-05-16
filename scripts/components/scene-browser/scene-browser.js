@@ -48,8 +48,15 @@ class SceneBrowser extends HTMLElement {
       ul.replaceChildren(
         ...this.availableScenes.map((scene) => {
           const li = document.createElement('li');
+          li.setAttribute('draggable', true);
           li.classList.add(`${tagName}-item`);
           li.textContent = scene.id;
+          li.addEventListener('dragstart', (ev) => {
+            ev.dataTransfer.setData('text/json', scene);
+          });
+          li.addEventListener('dragstart', (ev) => {
+            ev.dataTransfer.setData('text/plain', JSON.stringify(scene));
+          });
 
           return li;
         }),
