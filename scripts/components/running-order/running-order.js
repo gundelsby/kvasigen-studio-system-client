@@ -25,32 +25,55 @@ class RunningOrder extends HTMLElement {
     const shadowRoot = this.attachShadow({ mode: 'open' });
     shadowRoot.innerHTML = content;
 
-    this.scenes = [];
+    this.tracks = [];
   }
 
   connectedCallback() {
     logger.log(`Connected`);
 
-    this.addEventListener('drop', (event) => {
-      this.sceneDropHandler(event);
-    });
-    this.addEventListener('dragover', (event) => {
-      event.preventDefault();
-    });
+    this.addEventListener('drop', this.dropHandler.bind(this));
+    this.addEventListener('dragover', this.dragoverHandler.bind(this));
   }
 
-  sceneDropHandler(event) {
+  dragoverHandler(event) {
+    event.preventDefault();
+  }
+
+  dropHandler(event) {
     event.preventDefault();
 
-    const { dataTransfer } = event;
-    if (!dataTransfer) {
-      logger.warn(`No dataTransfer prop in drop event`);
-    }
+    try {
+      const { dataTransfer } = event;
+      if (!dataTransfer) {
+        logger.error(
+          `No dataTransfer prop in drop event, unable to process drop`,
+        );
+        return;
+      }
 
-    const newScene = JSON.parse(dataTransfer.getData('text/plain'));
-    this.scenes.push(newScene);
-    logger.log(`Added new scene to running order`, { ...newScene });
-    logger.log(`Number of scenes in running order: ${this.scenes.length}`);
+      const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+
+      if (typeof data.scene === 'object') {
+        this.addScene(data.scene);
+      }
+    } catch (err) {
+      logger.error(`Unable to process drop event`, { err });
+    }
+  }
+
+  addScene(scene) {
+    // this should all be converted to state/store-based logic
+    this.addTrack(scene);
+    logger.log(`Added new scene to running order`, { ...scene });
+  }
+
+  addTrack(...scenes) {
+    // this should all be converted to state/store-based logic
+
+    this.tracks.push({ parts: [...scenes] });
+    console.log(
+      `Added new track to running order, number of tracks in running order is now: ${this.tracks.length}`,
+    );
   }
 }
 

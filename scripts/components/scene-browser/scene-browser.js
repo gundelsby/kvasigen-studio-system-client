@@ -52,7 +52,7 @@ class SceneBrowser extends HTMLElement {
           li.classList.add(`${tagName}-item`);
           li.textContent = scene.id;
           li.addEventListener('dragstart', (ev) => {
-            ev.dataTransfer.setData('text/plain', JSON.stringify(scene));
+            ev.dataTransfer.setData('text/plain', JSON.stringify({ scene }));
           });
 
           return li;
