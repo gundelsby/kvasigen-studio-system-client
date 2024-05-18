@@ -69,6 +69,7 @@ class RunningOrder extends HTMLElement {
 
   addTrack(...scenes) {
     // this should all be converted to state/store-based logic
+    // tracks should maybe be called layers, since they're visual
 
     this.tracks.push({ parts: [...scenes] });
     console.log(
