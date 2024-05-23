@@ -1,5 +1,7 @@
 import getLogger from '../../util/logger.js';
 import { html } from '../../util/html.js';
+import partActionTypes from '../../state/demodata/script/parts/action-types.js';
+import { store } from '../../state/store.js';
 
 const tagName = 'running-order';
 
@@ -26,17 +28,34 @@ class RunningOrder extends HTMLElement {
     shadowRoot.innerHTML = content;
 
     this.tracks = [];
+    this.unsubCallbacks = [];
   }
 
   connectedCallback() {
     logger.log(`Connected`);
 
+    // UI event listeners
     this.addEventListener('drop', this.dropHandler.bind(this));
     this.addEventListener('dragover', this.dragoverHandler.bind(this));
+
+    // store event listeners
+    this.unsubCallbacks.push(
+      store.subscribe(this.storeUpdatedListener.bind(this)),
+    );
+  }
+
+  disconnectedCallback() {
+    for (const callback of this.unsubCallbacks) {
+      callback();
+    }
   }
 
   dragoverHandler(event) {
     event.preventDefault();
+  }
+
+  storeUpdatedListener() {
+    logger.log(`Store updated notification received`);
   }
 
   dropHandler(event) {
@@ -63,8 +82,7 @@ class RunningOrder extends HTMLElement {
 
   addScene(scene) {
     // this should all be converted to state/store-based logic
-    this.addTrack(scene);
-    logger.log(`Added new scene to running order`, { ...scene });
+    store.dispatch({ type: partActionTypes.ADD_PART, payload: scene });
   }
 
   addTrack(...scenes) {
