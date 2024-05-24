@@ -10,7 +10,7 @@ export default function (state, action) {
       logger.log(`Handled ${action.type}`);
       break;
     default:
-      logger.log(`Unknown action type ${action.type}`);
+    // skip unknown action type
   }
 
   return state;

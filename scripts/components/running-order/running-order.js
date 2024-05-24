@@ -27,7 +27,7 @@ class RunningOrder extends HTMLElement {
     const shadowRoot = this.attachShadow({ mode: 'open' });
     shadowRoot.innerHTML = content;
 
-    this.tracks = [];
+    this.layers = [];
     this.unsubCallbacks = [];
   }
 
@@ -89,9 +89,9 @@ class RunningOrder extends HTMLElement {
     // this should all be converted to state/store-based logic
     // tracks should maybe be called layers, since they're visual
 
-    this.tracks.push({ parts: [...scenes] });
+    this.layers.push({ parts: [...scenes] });
     console.log(
-      `Added new track to running order, number of tracks in running order is now: ${this.tracks.length}`,
+      `Added new track to running order, number of tracks in running order is now: ${this.layers.length}`,
     );
   }
 }

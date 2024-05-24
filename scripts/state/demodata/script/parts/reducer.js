@@ -10,7 +10,7 @@ export default function partsReducer(parts = [], action) {
       logger.log(`Added new part`, { newPart: parts.at(-1) });
       break;
     default:
-      logger.log(`Skipping unknown action type ${action.type}`);
+    // skip unknown action type
   }
 
   return parts;
