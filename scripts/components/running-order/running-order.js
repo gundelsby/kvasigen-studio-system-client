@@ -1,5 +1,6 @@
 import getLogger from '../../util/logger.js';
 import { html } from '../../util/html.js';
+import layerActionTypes from '../../state/action-types.js';
 import partActionTypes from '../../state/demodata/script/parts/action-types.js';
 import { store } from '../../state/store.js';
 
@@ -42,6 +43,13 @@ class RunningOrder extends HTMLElement {
     this.unsubCallbacks.push(
       store.subscribe(this.storeUpdatedListener.bind(this)),
     );
+    this.layers = store.getState().demoData.script.layers || [];
+    if (this.layers.length < 1) {
+      store.dispatch({
+        type: layerActionTypes.demodata.script.layers.ADD_LAYER,
+        payload: null,
+      });
+    }
   }
 
   disconnectedCallback() {
@@ -56,6 +64,13 @@ class RunningOrder extends HTMLElement {
 
   storeUpdatedListener() {
     logger.log(`Store updated notification received`);
+    const newLayers = store.getState().demoData.script.layers;
+    if (
+      newLayers &&
+      JSON.stringify(newLayers) !== JSON.stringify(this.layers)
+    ) {
+      this.layers = newLayers.slice();
+    }
   }
 
   dropHandler(event) {

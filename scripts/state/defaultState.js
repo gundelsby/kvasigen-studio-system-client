@@ -8,7 +8,8 @@ export default {
       bpm: 168,
     },
     script: {
-      scenes: [],
+      layers: [],
+      parts: [],
     },
   },
 };
