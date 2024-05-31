@@ -1,7 +1,6 @@
+import actionTypes from '../../state/action-types.js';
 import getLogger from '../../util/logger.js';
 import { html } from '../../util/html.js';
-import layerActionTypes from '../../state/action-types.js';
-import partActionTypes from '../../state/demodata/script/parts/action-types.js';
 import { store } from '../../state/store.js';
 
 const tagName = 'running-order';
@@ -45,10 +44,7 @@ class RunningOrder extends HTMLElement {
     );
     this.layers = store.getState().demoData.script.layers || [];
     if (this.layers.length < 1) {
-      store.dispatch({
-        type: layerActionTypes.demodata.script.layers.ADD_LAYER,
-        payload: null,
-      });
+      this.addLayer();
     }
   }
 
@@ -63,13 +59,13 @@ class RunningOrder extends HTMLElement {
   }
 
   storeUpdatedListener() {
-    logger.log(`Store updated notification received`);
     const newLayers = store.getState().demoData.script.layers;
     if (
       newLayers &&
       JSON.stringify(newLayers) !== JSON.stringify(this.layers)
     ) {
       this.layers = newLayers.slice();
+      this.renderLayers();
     }
   }
 
@@ -96,19 +92,17 @@ class RunningOrder extends HTMLElement {
   }
 
   addScene(scene) {
-    // this should all be converted to state/store-based logic
-    store.dispatch({ type: partActionTypes.ADD_PART, payload: scene });
+    store.dispatch({
+      type: actionTypes.demodata.script.parts.ADD_PART,
+      payload: scene,
+    });
   }
 
-  addTrack(...scenes) {
-    // this should all be converted to state/store-based logic
-    // tracks should maybe be called layers, since they're visual
-
-    this.layers.push({ parts: [...scenes] });
-    console.log(
-      `Added new track to running order, number of tracks in running order is now: ${this.layers.length}`,
-    );
+  addLayer() {
+    store.dispatch(actionTypes.demodata.script.layers.ADD_LAYER, null);
   }
+
+  renderLayers() {}
 }
 
 customElements.define(tagName, RunningOrder);
