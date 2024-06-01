@@ -1,9 +1,12 @@
 import { tagName as partTagName } from './part.js';
 import { store } from '../../state/store.js';
+import getLogger from '../../util/logger.js';
 
 const tagName = `ro-layer`;
 
-export default { tagName };
+export { tagName };
+
+const logger = getLogger(`component:${tagName}`);
 
 class Layer extends HTMLElement {
   constructor() {
@@ -20,6 +23,10 @@ class Layer extends HTMLElement {
       store.subscribe(this.storeUpdatedHandler.bind(this)),
     );
     this.uuid = this.dataset.uuid;
+    logger.log(`Connected ${this.uuid}`);
+    logger.log(this);
+
+    this.getPartsFromStore();
   }
 
   disconnectedCallback() {
@@ -29,10 +36,11 @@ class Layer extends HTMLElement {
   }
 
   storeUpdatedHandler() {
-    //I should build an API for this shit
-    const parts = store
-      .getState()
-      .demoData.script.parts.filter((p) => p.layer === this.uuid);
+    this.getPartsFromStore();
+  }
+
+  getPartsFromStore() {
+    const parts = store.getState().demoData.script.parts.slice();
     if (parts && JSON.stringify(parts) !== JSON.stringify(this.parts)) {
       this.layers = [...parts];
       this.renderParts();
@@ -44,6 +52,7 @@ class Layer extends HTMLElement {
     for (const part of this.parts) {
       const partElement = document.createElement(partTagName);
       partElement.dataset.uuid = part.uuid;
+      partElements.push(partElement);
     }
     this.shadowRoot.append(partElements);
   }

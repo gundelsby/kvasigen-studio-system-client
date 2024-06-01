@@ -1,6 +1,7 @@
 import actionTypes from '../../state/action-types.js';
 import getLogger from '../../util/logger.js';
 import { html } from '../../util/html.js';
+import { tagName as layerTagName } from './layer.js';
 import { store } from '../../state/store.js';
 
 const tagName = 'running-order';
@@ -46,6 +47,7 @@ class RunningOrder extends HTMLElement {
     if (this.layers.length < 1) {
       this.addLayer();
     }
+    this.renderLayers();
   }
 
   disconnectedCallback() {
@@ -65,7 +67,12 @@ class RunningOrder extends HTMLElement {
       JSON.stringify(newLayers) !== JSON.stringify(this.layers)
     ) {
       this.layers = newLayers.slice();
+      logger.log(`Updated layers, layer count is ${this.layers.length}`);
       this.renderLayers();
+    } else {
+      logger.log(
+        `Store updated, but layers not updated. Layer count is ${this.layers.length}`,
+      );
     }
   }
 
@@ -99,10 +106,25 @@ class RunningOrder extends HTMLElement {
   }
 
   addLayer() {
-    store.dispatch(actionTypes.demodata.script.layers.ADD_LAYER, null);
+    store.dispatch({
+      type: actionTypes.demodata.script.layers.ADD_LAYER,
+      payload: null,
+    });
   }
 
-  renderLayers() {}
+  renderLayers() {
+    const layerElements = [];
+
+    for (const layer of this.layers) {
+      const el = document.createElement(layerTagName);
+      el.dataset.uuid = layer.uuid;
+
+      logger.log(`Created element`, { el });
+      layerElements.push(el);
+    }
+
+    this.shadowRoot.append(...layerElements);
+  }
 }
 
 customElements.define(tagName, RunningOrder);
