@@ -1,4 +1,4 @@
-import actionTypes from '../../state/action-types.js';
+import api from '../../api/api.js';
 import getLogger from '../../util/logger.js';
 import { html } from '../../util/html.js';
 import { tagName as layerTagName } from './layer.js';
@@ -17,7 +17,7 @@ const logger = getLogger(`components:${tagName}`);
 // scene instances goes here
 const content = html`<section class="running-order">
   <div class="${classNames.DROP_TARGET}">
-    Drop scenes here to add to running order
+    Drop scene here to create a new layer
   </div>
 </section>`;
 
@@ -61,6 +61,7 @@ class RunningOrder extends HTMLElement {
   }
 
   storeUpdatedListener() {
+    //TODO: change to API call
     const newLayers = store.getState().demoData.script.layers;
     if (
       newLayers &&
@@ -91,25 +92,16 @@ class RunningOrder extends HTMLElement {
       const data = JSON.parse(event.dataTransfer.getData('text/plain'));
 
       if (typeof data.scene === 'object') {
-        this.addScene(data.scene);
+        this.addLayer({ parts: [data.scene] });
       }
     } catch (err) {
       logger.error(`Unable to process drop event`, { err });
     }
   }
 
-  addScene(scene) {
-    store.dispatch({
-      type: actionTypes.demodata.script.parts.ADD_PART,
-      payload: scene,
-    });
-  }
-
-  addLayer() {
-    store.dispatch({
-      type: actionTypes.demodata.script.layers.ADD_LAYER,
-      payload: null,
-    });
+  addLayer(data) {
+    const parts = data?.parts ?? [];
+    api.demodata.script.layers.createLayerWithParts({ parts });
   }
 
   renderLayers() {
@@ -123,7 +115,7 @@ class RunningOrder extends HTMLElement {
       layerElements.push(el);
     }
 
-    this.shadowRoot.append(...layerElements);
+    this.shadowRoot.prepend(...layerElements);
   }
 }
 

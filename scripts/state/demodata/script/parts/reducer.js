@@ -6,7 +6,7 @@ const logger = getLogger('state:demodata:script:parts:reducer');
 export default function partsReducer(parts = [], action) {
   switch (action.type) {
     case actionTypes.ADD_PART:
-      parts.push(createPart(action.payload));
+      parts.push(action.payload); //TODO: validate payload as part
       logger.log(`Added new part`, { newPart: parts.at(-1) });
       break;
     default:
@@ -14,12 +14,4 @@ export default function partsReducer(parts = [], action) {
   }
 
   return parts;
-}
-
-function createPart(data) {
-  const uuid = self.crypto.randomUUID();
-  return {
-    uuid,
-    ...data,
-  };
 }

@@ -6,7 +6,7 @@ const logger = getLogger('state:demodata:script:layers:reducer');
 export default function layersReducer(layers = [], action) {
   switch (action.type) {
     case actionTypes.ADD_LAYER:
-      layers.push(createLayer(action.payload));
+      layers.push(action.payload); //TODO: validate data as layer
       logger.log(`Added new layer to demo script`, { layers: layers.at(-1) });
       break;
     default:
@@ -14,12 +14,4 @@ export default function layersReducer(layers = [], action) {
   }
 
   return layers;
-}
-
-function createLayer(data = {}) {
-  const uuid = self.crypto.randomUUID();
-  return {
-    uuid,
-    ...data,
-  };
 }

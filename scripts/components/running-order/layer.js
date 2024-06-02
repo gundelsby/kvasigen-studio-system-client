@@ -1,6 +1,6 @@
+import getLogger from '../../util/logger.js';
 import { tagName as partTagName } from './part.js';
 import { store } from '../../state/store.js';
-import getLogger from '../../util/logger.js';
 
 const tagName = `ro-layer`;
 
@@ -27,6 +27,7 @@ class Layer extends HTMLElement {
     logger.log(this);
 
     this.getPartsFromStore();
+    this.renderParts();
   }
 
   disconnectedCallback() {
@@ -37,17 +38,20 @@ class Layer extends HTMLElement {
 
   storeUpdatedHandler() {
     this.getPartsFromStore();
+    this.renderParts();
   }
 
   getPartsFromStore() {
+    //TODO: move to API
     const parts = store.getState().demoData.script.parts.slice();
     if (parts && JSON.stringify(parts) !== JSON.stringify(this.parts)) {
       this.layers = [...parts];
-      this.renderParts();
+      //TODO: set dirty/updated flag
     }
   }
 
   renderParts() {
+    //TODO: check dirty/updated flag
     const partElements = [];
     for (const part of this.parts) {
       const partElement = document.createElement(partTagName);
@@ -56,6 +60,7 @@ class Layer extends HTMLElement {
     }
     this.shadowRoot.append(partElements);
   }
+  //TODO: reset dirty/updated flag
 }
 
 customElements.define(tagName, Layer);
