@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "static .",
-    "test": "mocha \"./scripts/**/*-test.js\"",
-    "test:watch": "npm run test -- -w --reporter min"
+    "test": "mocha \"./test/**/*-test.js\"",
+    "test:watch": "npm run test -- --experimental-require-module -w --reporter min"
   },
   "author": "lug00ber",
   "license": "MIT",
