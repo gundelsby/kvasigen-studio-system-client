@@ -1,4 +1,5 @@
 import actionTypes from '../../../state/action-types.js';
+import { createLayerObject } from '../../../model/demodata/script/layers.js';
 import partsApi from './parts.js';
 import { store } from '../../../state/store.js';
 
@@ -31,13 +32,6 @@ function createLayer() {
     type: actionTypes.demodata.script.layers.ADD_LAYER,
     payload: layer,
   });
-
-  return layer;
-}
-
-function createLayerObject() {
-  const uuid = self.crypto.randomUUID();
-  const layer = { uuid, parts: [] };
 
   return layer;
 }
