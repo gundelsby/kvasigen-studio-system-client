@@ -1,6 +1,7 @@
 import getLogger from '../../util/logger.js';
 import { tagName as partTagName } from './part.js';
 import { store } from '../../state/store.js';
+import api from '../../api/api.js';
 
 const tagName = `ro-layer`;
 
@@ -16,6 +17,8 @@ class Layer extends HTMLElement {
     this.unsubCallbacks = [];
 
     this.attachShadow({ mode: 'open' });
+
+    this.partsUpdatedSinceLastRender = false;
   }
 
   connectedCallback() {
@@ -31,8 +34,8 @@ class Layer extends HTMLElement {
   }
 
   disconnectedCallback() {
-    for (const callback of this.unsubCallbacks) {
-      callback();
+    for (const unsubscribe of this.unsubCallbacks) {
+      unsubscribe();
     }
   }
 
@@ -42,16 +45,18 @@ class Layer extends HTMLElement {
   }
 
   getPartsFromStore() {
-    //TODO: move to API
-    const parts = store.getState().demoData.script.parts.slice();
+    const parts = api.demodata.script.parts.getParts();
     if (parts && JSON.stringify(parts) !== JSON.stringify(this.parts)) {
       this.layers = [...parts];
-      //TODO: set dirty/updated flag
+      this.partsUpdatedSinceLastRender = true;
     }
   }
 
   renderParts() {
-    //TODO: check dirty/updated flag
+    if (this.partsUpdatedSinceLastRender !== true) {
+      return;
+    }
+
     const partElements = [];
     for (const part of this.parts) {
       const partElement = document.createElement(partTagName);
@@ -59,8 +64,8 @@ class Layer extends HTMLElement {
       partElements.push(partElement);
     }
     this.shadowRoot.append(partElements);
+    this.partsUpdatedSinceLastRender = false;
   }
-  //TODO: reset dirty/updated flag
 }
 
 customElements.define(tagName, Layer);
