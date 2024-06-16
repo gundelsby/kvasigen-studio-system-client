@@ -2,10 +2,10 @@
   "name": "kvasigen-studio-system-client",
   "version": "1.0.0",
   "description": "Nucular Panther Plant",
-  "main": "index.html",
+  "main": "client/index.html",
   "type": "module",
   "scripts": {
-    "start": "static .",
+    "start": "static ./client",
     "test": "mocha \"./test/**/*-test.js\"",
     "test:watch": "npm run test -- --experimental-require-module -w --reporter min"
   },

@@ -1,7 +1,7 @@
 import {
   createPartObject,
   isValidPart,
-} from '../../../../scripts/model/demodata/script/parts.js';
+} from '../../../../client/scripts/model/demodata/script/parts.js';
 import referee from '@sinonjs/referee';
 
 const { assert, refute } = referee;

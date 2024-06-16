@@ -1,5 +1,5 @@
+import { isValidUuid } from '../../client/scripts/model/uuid-helpers.js';
 import referee from '@sinonjs/referee';
-import { isValidUuid } from '../../scripts/model/uuid-helpers.js';
 
 const { assert, refute } = referee;
 
