@@ -1,7 +1,7 @@
+import api from '../../api/api.js';
 import getLogger from '../../util/logger.js';
 import { tagName as partTagName } from './part.js';
 import { store } from '../../state/store.js';
-import api from '../../api/api.js';
 
 const tagName = `ro-layer`;
 
@@ -47,13 +47,22 @@ class Layer extends HTMLElement {
   getPartsFromStore() {
     const parts = api.demodata.script.parts.getParts();
     if (parts && JSON.stringify(parts) !== JSON.stringify(this.parts)) {
-      this.layers = [...parts];
+      this.parts = [...parts];
       this.partsUpdatedSinceLastRender = true;
+      logger.log(`Parts from store are not the same as local parts, updating`, {
+        local: this.parts,
+      });
+    } else {
+      logger.log(`Parts from store are the same as local parts, not updating`, {
+        local: this.parts,
+        store: parts,
+      });
     }
   }
 
   renderParts() {
     if (this.partsUpdatedSinceLastRender !== true) {
+      logger.log(`renderParts() called, but no updates since last render`);
       return;
     }
 
@@ -63,8 +72,9 @@ class Layer extends HTMLElement {
       partElement.dataset.uuid = part.uuid;
       partElements.push(partElement);
     }
-    this.shadowRoot.append(partElements);
+    this.shadowRoot.append(...partElements);
     this.partsUpdatedSinceLastRender = false;
+    logger.log(`renderParts() called, re-rendered parts`, { partElements });
   }
 }
 

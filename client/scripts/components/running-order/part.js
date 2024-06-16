@@ -52,14 +52,16 @@ class Part extends HTMLElement {
   }
 
   render() {
-    if (this.dataUpdatedSinceLastRender !== false) {
+    if (this.dataUpdatedSinceLastRender !== true) {
       return;
     }
 
     const values = Object.values(this.data);
     this.shadowRoot.innerHTML = html`<p>${values.join(',')}</p>`;
     this.dataUpdatedSinceLastRender = false;
-    logger.success(`Rendered part ${this.uuid}`);
+    logger.success(`render(): Rendered part ${this.uuid}`, {
+      innerHTML: this.innerHTML,
+    });
   }
 }
 

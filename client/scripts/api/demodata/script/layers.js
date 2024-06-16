@@ -3,7 +3,7 @@ import { createLayerObject } from '../../../model/demodata/script/layers.js';
 import partsApi from './parts.js';
 import { store } from '../../../state/store.js';
 
-export default { createLayerWithParts, createLayer };
+export default { createLayerWithParts, createLayer, getLayer, getLayers };
 
 function createLayerWithParts({ parts = [] }) {
   const layer = createLayerObject();
@@ -34,4 +34,25 @@ function createLayer() {
   });
 
   return layer;
+}
+
+/**
+ * Get a layer by it's unique id. Returns null if not found
+ *
+ * @param {string} uuid - uuid of the layer to get
+ * @returns {import('../../../model/demodata/script/layers.js').Layer|null}
+ */
+function getLayer(uuid) {
+  return (
+    store.getState().demoData.script.layers.find((l) => l.uuid === uuid) ?? null
+  );
+}
+
+/**
+ * Get all layers in the current demo script
+ *
+ * @returns {import('../../../model/demodata/script/layers.js').Layer[]}
+ */
+function getLayers() {
+  return store.getState().demoData.script.layers.slice();
 }

@@ -7,6 +7,7 @@ import { store } from '../../state/store.js';
 const tagName = 'running-order';
 
 const classNames = {
+  LAYERS_CONTAINER: 'layers',
   DROP_TARGET: 'drop-target',
 };
 
@@ -16,6 +17,7 @@ const logger = getLogger(`components:${tagName}`);
 
 // scene instances goes here
 const content = html`<section class="running-order">
+  <div class="${classNames.LAYERS_CONTAINER}"></div>
   <div class="${classNames.DROP_TARGET}">
     Drop scene here to create a new layer
   </div>
@@ -43,7 +45,7 @@ class RunningOrder extends HTMLElement {
     this.unsubCallbacks.push(
       store.subscribe(this.storeUpdatedListener.bind(this)),
     );
-    this.layers = store.getState().demoData.script.layers || [];
+    this.layers = api.demodata.script.layers.getLayers() || [];
     if (this.layers.length < 1) {
       this.addLayer();
     }
@@ -61,8 +63,8 @@ class RunningOrder extends HTMLElement {
   }
 
   storeUpdatedListener() {
-    //TODO: change to API call
-    const newLayers = store.getState().demoData.script.layers;
+    const newLayers = api.demodata.script.layers.getLayers();
+
     if (
       newLayers &&
       JSON.stringify(newLayers) !== JSON.stringify(this.layers)
@@ -115,7 +117,9 @@ class RunningOrder extends HTMLElement {
       layerElements.push(el);
     }
 
-    this.shadowRoot.prepend(...layerElements);
+    this.shadowRoot
+      .querySelector(`.${classNames.LAYERS_CONTAINER}`)
+      .replaceChildren(...layerElements);
   }
 }
 
