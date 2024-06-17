@@ -1,6 +1,14 @@
 /**
  * @typedef {Object} Part
  * @property {string} uuid - the part id
+ * @property {string} id - the engine id of the scene type this part instantiates
+ * @property {PartParameter[]} parameters - the parameters for this part
+ *
+ * @typedef {Object} PartParameter
+ * @property {string} name - parameter name
+ * @property {string} type - data type for parameter
+ * @property {string} usedFor - intended usage for parameter
+ * @property {boolean} canAutomate - defines whether the parameter's value is static for the part or can be automated
  */
 
 import { isValidUuid } from '../../uuid-helpers.js';
