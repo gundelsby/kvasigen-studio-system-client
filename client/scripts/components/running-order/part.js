@@ -1,8 +1,7 @@
 import api from '../../api/api.js';
-import getLogger from '../../util/logger.js';
-import { html } from '../../util/html.js';
-import { store } from '../../state/store.js';
 import { createParameterElement } from './part-parameter.js';
+import getLogger from '../../util/logger.js';
+import { store } from '../../state/store.js';
 
 const tagName = `ro-part`;
 
