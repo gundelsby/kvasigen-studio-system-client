@@ -2,6 +2,7 @@ import api from '../../api/api.js';
 import getLogger from '../../util/logger.js';
 import { html } from '../../util/html.js';
 import { store } from '../../state/store.js';
+import { createParameterElement } from './part-parameter.js';
 
 const tagName = `ro-part`;
 
@@ -56,8 +57,18 @@ class Part extends HTMLElement {
       return;
     }
 
-    const values = Object.values(this.data);
-    this.shadowRoot.innerHTML = html`<p>${values.join(',')}</p>`;
+    const { id, parameters } = this.data;
+    const idElement = document.createElement('p');
+    idElement.classList.add('scene-type');
+    idElement.textContent = id;
+    const paramElements = parameters.map(createParameterElement);
+
+    const paramsContainer = document.createElement('div');
+    paramsContainer.classList.add('parameters');
+    paramsContainer.append(...paramElements);
+
+    this.shadowRoot.replaceChildren(idElement, paramsContainer);
+
     this.dataUpdatedSinceLastRender = false;
     logger.success(`render(): Rendered part ${this.uuid}`, {
       innerHTML: this.innerHTML,
