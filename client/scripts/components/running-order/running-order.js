@@ -1,6 +1,6 @@
 import api from '../../api/api.js';
 import getLogger from '../../util/logger.js';
-import { html } from '../../util/html.js';
+import { html } from '../../util/syntax-helpers.js';
 import { tagName as layerTagName } from './layer.js';
 import { store } from '../../state/store.js';
 

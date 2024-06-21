@@ -1,5 +1,5 @@
 import getLogger from '../../util/logger.js';
-import { html } from '../../../scripts/util/html.js';
+import { html } from '../../util/syntax-helpers.js';
 import { store } from '../../state/store.js';
 
 const tagName = 'scene-browser';
