@@ -43,7 +43,7 @@ class RunningOrder extends HTMLElement {
 
     // store event listeners
     this.unsubCallbacks.push(
-      store.subscribe(this.storeUpdatedListener.bind(this)),
+      store.subscribe(this.storeUpdatedHandler.bind(this)),
     );
     this.layers = api.demodata.script.layers.getLayers() || [];
     if (this.layers.length < 1) {
@@ -62,7 +62,7 @@ class RunningOrder extends HTMLElement {
     event.preventDefault();
   }
 
-  storeUpdatedListener() {
+  storeUpdatedHandler() {
     const newLayers = api.demodata.script.layers.getLayers();
 
     if (

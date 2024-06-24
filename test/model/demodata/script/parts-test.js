@@ -7,6 +7,13 @@ import referee from '@sinonjs/referee';
 const { assert, refute } = referee;
 
 const FAKE_UUID_VALUE = '36b8f84d-df4e-4d49-b662-bcde71a8764f';
+const FAKE_UUID_VALUE_ALT = '46b8f84d-df4e-4d49-b662-bcde71a8764e';
+
+const validPartData = {
+  id: 'klovnese',
+  layer: FAKE_UUID_VALUE_ALT,
+  parameters: [],
+};
 
 describe('model:demodata:script:parts', () => {
   // eslint-disable-next-line no-undef
@@ -25,20 +32,45 @@ describe('model:demodata:script:parts', () => {
     });
 
     it('should return false for an object with an invalid uuid', () => {
-      const invalid = createPartObject();
+      const invalid = createPartObject(validPartData);
       invalid.uuid = 'lol';
 
       refute(isValidPart(invalid));
     });
 
+    it('should return false for an object missing parameters array', () => {
+      const invalid = createPartObject(validPartData);
+      delete invalid.parameters;
+
+      refute(isValidPart(invalid));
+    });
+
     it('should return true for a valid object', () => {
-      assert(isValidPart(createPartObject()));
+      assert(isValidPart(createPartObject(validPartData)));
     });
   });
 
   describe('createPartObject', () => {
-    it('should return a valid Part', () => {
-      assert(isValidPart(createPartObject()));
+    it('should return a valid Part for valid data', () => {
+      const valid = createPartObject(validPartData);
+
+      assert(isValidPart(valid));
+    });
+
+    it('should create a uuid for the new part', () => {
+      // eslint-disable-next-line no-undef
+      const expected = global.self.crypto.randomUUID();
+      const part = createPartObject(validPartData);
+
+      assert.equals(expected, part.uuid);
+    });
+
+    it('should throw if input is missing layer id', () => {
+      const invalid = { id: 'klovnese', parameters: [] };
+
+      assert.exception(() => {
+        createPartObject(invalid);
+      });
     });
   });
 });

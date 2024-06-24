@@ -1,5 +1,6 @@
 import api from '../../api/api.js';
 import getLogger from '../../util/logger.js';
+import getStyleTag from './layer-styles.js';
 import { tagName as partTagName } from './part.js';
 import { store } from '../../state/store.js';
 
@@ -17,6 +18,7 @@ class Layer extends HTMLElement {
     this.unsubCallbacks = [];
 
     this.attachShadow({ mode: 'open' });
+    this.shadowRoot.appendChild(getStyleTag());
 
     this.partsUpdatedSinceLastRender = false;
   }
@@ -27,7 +29,12 @@ class Layer extends HTMLElement {
     );
     this.uuid = this.dataset.uuid;
     logger.log(`Connected ${this.uuid}`);
-    logger.log(this);
+
+    this.classList.add('drop-target');
+
+    // UI event listeners
+    this.addEventListener('drop', this.dropHandler.bind(this));
+    this.addEventListener('dragover', this.dragoverHandler.bind(this));
 
     this.getPartsFromStore();
     this.renderParts();
@@ -39,13 +46,45 @@ class Layer extends HTMLElement {
     }
   }
 
+  dragoverHandler(event) {
+    event.preventDefault();
+  }
+
+  dropHandler(event) {
+    event.preventDefault();
+
+    try {
+      const { dataTransfer } = event;
+      if (!dataTransfer) {
+        logger.error(
+          `No dataTransfer prop in drop event, unable to process drop`,
+        );
+        return;
+      }
+
+      const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+
+      if (typeof data.scene === 'object') {
+        const partData = Object.assign({}, data.scene, { layer: this.uuid });
+        const part = api.demodata.script.parts.createPart(partData);
+        this.parts.push(part);
+        logger.success(`Added new part ${part.uuid} for layer ${this.uuid}`);
+      }
+    } catch (err) {
+      logger.error(`Unable to process drop event`, { err });
+    }
+  }
+
   storeUpdatedHandler() {
     this.getPartsFromStore();
     this.renderParts();
   }
 
   getPartsFromStore() {
-    const parts = api.demodata.script.parts.getParts();
+    const parts = api.demodata.script.parts.getParts({
+      partProps: { layer: this.uuid },
+    });
+
     if (parts && JSON.stringify(parts) !== JSON.stringify(this.parts)) {
       this.parts = [...parts];
       this.partsUpdatedSinceLastRender = true;
