@@ -1,6 +1,7 @@
 :root {
   --bg-main: #000000;
   --bg-light: #1b263b;
+  --bg-dark: hsl(from var(--bg-light) h s calc(l * 0.5));
   --text-main: #42f2f7;
   --frame-dark: #415a77;
   --frame-light: #778da9;

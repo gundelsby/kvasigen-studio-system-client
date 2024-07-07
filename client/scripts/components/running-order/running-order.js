@@ -39,7 +39,12 @@ class RunningOrder extends HTMLElement {
 
     // UI event listeners
     this.addEventListener('drop', this.dropHandler.bind(this));
-    this.addEventListener('dragover', this.dragoverHandler.bind(this));
+    this.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+    });
+    this.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
 
     // store event listeners
     this.unsubCallbacks.push(
@@ -56,10 +61,6 @@ class RunningOrder extends HTMLElement {
     for (const callback of this.unsubCallbacks) {
       callback();
     }
-  }
-
-  dragoverHandler(event) {
-    event.preventDefault();
   }
 
   storeUpdatedHandler() {
@@ -79,7 +80,13 @@ class RunningOrder extends HTMLElement {
     }
   }
 
+  /**
+   * Handles a drag and drop drop event
+   *
+   * @param {DragEvent} event
+   */
   dropHandler(event) {
+    event.stopPropagation();
     event.preventDefault();
 
     try {

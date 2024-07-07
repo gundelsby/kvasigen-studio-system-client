@@ -13,9 +13,9 @@ export default function getStyleTag() {
 
 const styles = css`
   :host {
-    background: var(--bg-dark);
     display: inline-block;
-    width: 100%;
-    outline: solid var(--frame-dark);
+    background-color: var(--bg-light);
+    outline: solid var(--frame-light);
+    padding: 4px;
   }
 `;

@@ -1,6 +1,7 @@
 import api from '../../api/api.js';
-import { createParameterElement } from './part-parameter.js';
+import createParameterElement from './part-parameter.js';
 import getLogger from '../../util/logger.js';
+import getStyleTag from './part-styles.js';
 import { store } from '../../state/store.js';
 
 const tagName = `ro-part`;
@@ -15,7 +16,10 @@ class Part extends HTMLElement {
 
     this.unsubCallbacks = [];
 
+    this.partDataRoot = document.createElement('div');
+
     this.attachShadow({ mode: 'open' });
+    this.shadowRoot.append(getStyleTag(), this.partDataRoot);
   }
 
   connectedCallback() {
@@ -59,14 +63,14 @@ class Part extends HTMLElement {
     const { id, parameters } = this.data;
     const idElement = document.createElement('p');
     idElement.classList.add('scene-type');
-    idElement.textContent = id;
+    idElement.textContent = `${id}`;
     const paramElements = parameters.map(createParameterElement);
 
     const paramsContainer = document.createElement('div');
     paramsContainer.classList.add('parameters');
     paramsContainer.append(...paramElements);
 
-    this.shadowRoot.replaceChildren(idElement, paramsContainer);
+    this.partDataRoot.replaceChildren(idElement, paramsContainer);
 
     this.dataUpdatedSinceLastRender = false;
     logger.success(`render(): Rendered part ${this.uuid}`, {

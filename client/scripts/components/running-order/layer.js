@@ -14,11 +14,14 @@ class Layer extends HTMLElement {
   constructor() {
     super();
 
-    this.parts = [];
+    this.parts = new Set();
     this.unsubCallbacks = [];
 
+    this.partsRoot = document.createElement('div');
+    this.partsRoot.textContent = 'Drop scene here to create a new part';
+
     this.attachShadow({ mode: 'open' });
-    this.shadowRoot.appendChild(getStyleTag());
+    this.shadowRoot.append(getStyleTag(), this.partsRoot);
 
     this.partsUpdatedSinceLastRender = false;
   }
@@ -33,8 +36,13 @@ class Layer extends HTMLElement {
     this.classList.add('drop-target');
 
     // UI event listeners
+    this.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+    });
+    this.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
     this.addEventListener('drop', this.dropHandler.bind(this));
-    this.addEventListener('dragover', this.dragoverHandler.bind(this));
 
     this.getPartsFromStore();
     this.renderParts();
@@ -46,11 +54,11 @@ class Layer extends HTMLElement {
     }
   }
 
-  dragoverHandler(event) {
-    event.preventDefault();
-  }
-
+  /**
+   * @param {DragEvent} event
+   */
   dropHandler(event) {
+    event.stopPropagation();
     event.preventDefault();
 
     try {
@@ -66,9 +74,9 @@ class Layer extends HTMLElement {
 
       if (typeof data.scene === 'object') {
         const partData = Object.assign({}, data.scene, { layer: this.uuid });
-        const part = api.demodata.script.parts.createPart(partData);
-        this.parts.push(part);
-        logger.success(`Added new part ${part.uuid} for layer ${this.uuid}`);
+        const { uuid } = api.demodata.script.parts.createPart(partData);
+        this.parts.add(uuid);
+        logger.success(`Added new part ${uuid} for layer ${this.uuid}`);
       }
     } catch (err) {
       logger.error(`Unable to process drop event`, { err });
@@ -81,12 +89,19 @@ class Layer extends HTMLElement {
   }
 
   getPartsFromStore() {
-    const parts = api.demodata.script.parts.getParts({
-      partProps: { layer: this.uuid },
-    });
+    const partIds = new Set(
+      api.demodata.script.parts
+        .getParts({
+          partProps: { layer: this.uuid },
+        })
+        .map((p) => p.uuid),
+    );
 
-    if (parts && JSON.stringify(parts) !== JSON.stringify(this.parts)) {
-      this.parts = [...parts];
+    if (
+      partIds.size !== this.parts.size &&
+      this.parts.symmetricDifference(partIds).size !== 0
+    ) {
+      this.parts = partIds;
       this.partsUpdatedSinceLastRender = true;
       logger.log(`Parts from store are not the same as local parts, updating`, {
         local: this.parts,
@@ -94,7 +109,7 @@ class Layer extends HTMLElement {
     } else {
       logger.log(`Parts from store are the same as local parts, not updating`, {
         local: this.parts,
-        store: parts,
+        store: partIds,
       });
     }
   }
@@ -106,12 +121,12 @@ class Layer extends HTMLElement {
     }
 
     const partElements = [];
-    for (const part of this.parts) {
+    for (const uuid of this.parts) {
       const partElement = document.createElement(partTagName);
-      partElement.dataset.uuid = part.uuid;
+      partElement.dataset.uuid = uuid;
       partElements.push(partElement);
     }
-    this.shadowRoot.append(...partElements);
+    this.partsRoot.replaceChildren(...partElements);
     this.partsUpdatedSinceLastRender = false;
     logger.log(`renderParts() called, re-rendered parts`, { partElements });
   }

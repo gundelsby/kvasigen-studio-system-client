@@ -9,6 +9,8 @@ function createLayerWithParts({ parts = [] }) {
   const layer = createLayerObject();
 
   for (const part of parts) {
+    part.layer = layer.uuid;
+
     if (part.uuid) {
       layer.parts.push({ uuid: part.uuid });
     } else {

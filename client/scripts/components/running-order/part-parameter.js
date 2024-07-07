@@ -1,32 +1,18 @@
-const tagName = 'ro-part-parameter';
-
-export { tagName, createParameterElement };
-
-class PartParameterComponent extends HTMLElement {
-  constructor() {
-    super();
-  }
-}
-
-customElements.define(tagName, PartParameterComponent);
+import createColorParameterElement from './parameters/color-parameter.js';
+import { createGenericParameterElement } from './parameters/generic-parameter.js';
 
 /**
- * Create a part parameter custom element from a PartParameter object
+ * Create a part parameter custom element from a PartParameter object. Type of
+ * parameter element returned is decided based upon the parameter properties.
  *
  * @param {import("../../model/demodata/script/parts.js").PartParameter} parameter - parameter to create element for
  * @returns {HTMLElement}
  */
-function createParameterElement(parameter) {
-  const { name, type, usedFor, canAutomate } = parameter;
-
-  const nameEl = document.createElement('p');
-  nameEl.textContent = name;
-
-  const el = document.createElement(tagName);
-  el.append(nameEl);
-  el.dataset.type = type;
-  el.dataset.usedFor = usedFor;
-  el.dataset.canAutomate = canAutomate;
-
-  return el;
+export default function createParameterElement(parameter) {
+  switch (parameter.usedFor) {
+    case 'color':
+      return createColorParameterElement(parameter);
+    default:
+      return createGenericParameterElement(parameter);
+  }
 }

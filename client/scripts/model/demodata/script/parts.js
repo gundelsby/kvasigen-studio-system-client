@@ -10,6 +10,7 @@
  * @property {string} type - data type for parameter
  * @property {string} [usedFor] - intended usage for parameter
  * @property {boolean} [canAutomate] - defines whether the parameter's value is static for the part or can be automated
+ * @property {any} [value] - the parameter value
  */
 
 import { isValidUuid } from '../../uuid-helpers.js';
