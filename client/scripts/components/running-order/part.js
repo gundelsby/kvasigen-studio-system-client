@@ -11,6 +11,7 @@ export { tagName };
 const logger = getLogger(`component:${tagName}`);
 
 class Part extends HTMLElement {
+  //TODO: the part needs to keep track of its parameter values *OR* parameters must be in the store
   constructor() {
     super();
 

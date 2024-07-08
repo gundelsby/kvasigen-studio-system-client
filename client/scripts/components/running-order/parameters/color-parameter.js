@@ -17,26 +17,38 @@ export default function createColorParameterElement(param) {
   return el;
 }
 
-const template = (name) =>
+const template = (name, { r, g, b }) =>
   html`<p>
-      <span class="name">${name}</span>
-    </p>
-    <dialog>
-      <p>color editor lol</p>
-    </dialog> `;
+    <span class="name">${name}</span>
+    <input
+      type="color"
+      name="color"
+      value="#${r.toString(16)}${g.toString(16)}${b.toString(16)}"
+    />
+  </p>`;
 
 const styles = ({ r, g, b }) => css`
   :host {
     .name {
-      &::after {
-        background-color: rgb(${r} ${g} ${b});
-        border-radius: 50%;
-        content: '';
-        display: inline-block;
-        margin-left: 8px;
-        height: 1em;
-        width: 1em;
-      }
+    }
+
+    input[type='color' i] {
+      border-radius: 50%;
+      inline-size: 30px;
+      block-size: 30px;
+      border-width: 1px;
+      border-style: solid;
+      border-color: rgb(${r}, ${g}, ${b});
+      padding: 1px;
+    }
+
+    input[type='color' i]::-webkit-color-swatch-wrapper {
+      padding: 1px;
+    }
+
+    input[type='color' i]::-webkit-color-swatch,
+    input[type='color' i]::-moz-color-swatch {
+      border-radius: 50%;
     }
   }
 `;
@@ -53,28 +65,36 @@ function getStyleTag(rgbaValue) {
   return tag;
 }
 
-class ColorParameter extends HTMLElement {
-  constructor() {
-    super();
+customElements.define(
+  tagName,
+  class ColorParameter extends HTMLElement {
+    //TODO: Why the fuck is everything reset when new parts are added?
+    constructor() {
+      super();
 
-    this.attachShadow({ mode: 'open' });
+      this.attachShadow({ mode: 'open' });
 
-    this.contentRoot = document.createElement('div');
-  }
+      this.contentRoot = document.createElement('div');
+    }
 
-  connectedCallback() {
-    this.name = this.dataset.name;
-    this.value = this.dataset.value
-      ? JSON.parse(this.dataset.value)
-      : defaultColorValue;
-    this.contentRoot.innerHTML = template(this.name);
-    this.shadowRoot.append(getStyleTag(this.value), this.contentRoot);
+    connectedCallback() {
+      this.name = this.dataset.name;
+      this.value = this.dataset.value ?? defaultColorValue;
+      this.contentRoot.innerHTML = template(this.name, this.value);
+      this.shadowRoot.append(getStyleTag(this.value), this.contentRoot);
 
-    this.dialog = this.shadowRoot.querySelector('dialog');
-    this.dialogTrigger = this.shadowRoot.querySelector('p');
+      this.shadowRoot
+        .querySelector('input[type=color]')
+        .addEventListener('change', this.changeUpdateHandler.bind(this));
+    }
 
-    this.dialogTrigger.addEventListener('click', () => this.dialog.showModal());
-  }
-}
+    /**
+     * @param {Event} event
+     */
+    changeUpdateHandler(event) {
+      const { value } = event.target;
 
-customElements.define(tagName, ColorParameter);
+      this.dataset.value = value;
+    }
+  },
+);

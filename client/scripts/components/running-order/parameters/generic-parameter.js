@@ -17,10 +17,10 @@ customElements.define(tagName, GenericPartParameterComponent);
  * @returns {HTMLElement}
  */
 function createGenericParameterElement(parameter) {
-  const { name, type, usedFor, canAutomate } = parameter;
+  const { name, type, usedFor, canAutomate, value } = parameter;
 
   const nameEl = document.createElement('p');
-  nameEl.textContent = name;
+  nameEl.textContent = `${name}: ${value}`;
 
   const el = document.createElement(tagName);
   el.append(nameEl);
