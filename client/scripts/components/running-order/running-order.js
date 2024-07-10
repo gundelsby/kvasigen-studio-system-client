@@ -98,10 +98,12 @@ class RunningOrder extends HTMLElement {
         return;
       }
 
-      const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+      const { scene } = JSON.parse(event.dataTransfer.getData('text/plain'));
 
-      if (typeof data.scene === 'object') {
-        this.addLayer({ parts: [data.scene] });
+      if (typeof scene === 'object') {
+        scene.startsAt = 0;
+        scene.endsAt = 5000;
+        this.addLayer({ parts: [scene] });
       }
     } catch (err) {
       logger.error(`Unable to process drop event`, { err });

@@ -3,6 +3,8 @@
  * @property {string} uuid - the part id
  * @property {string} id - the engine id of the scene type this part instantiates
  * @property {string} layer - the id of the layer this part belongs to
+ * @property {number} startsAt - part start time in ms from start of the demo
+ * @property {number} endsAt - part end time in ms from start of the demo
  * @property {PartParameter[]} parameters - the parameters for this part
  *
  * @typedef {Object} PartParameter
@@ -59,6 +61,26 @@ function isValidPart(obj) {
     console.warn(`Invalid part data, missing or invalid layer id`, {
       data: obj,
     });
+    return false;
+  }
+
+  if (!Number.isInteger(obj.startsAt)) {
+    console.warn(
+      `Invalid part data, missing or invalid part start time (${obj.startsAt})`,
+      {
+        data: obj,
+      },
+    );
+    return false;
+  }
+
+  if (!Number.isInteger(obj.endsAt)) {
+    console.warn(
+      `Invalid part data, missing or invalid part end time (${obj.endsAt})`,
+      {
+        data: obj,
+      },
+    );
     return false;
   }
 

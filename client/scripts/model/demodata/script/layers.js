@@ -1,10 +1,12 @@
 /**
  * @typedef {Object} Layer
  * @property {string} uuid - the layer id
- * @property {import("./parts.js").Part[]} lastName - The user's last name.
- * @property {number} age - The user's age.
- * @property {string} email - The user's email address.
+ * @property {string} [name] - optional layer name
+ * @property {import("./parts.js").Part[]} parts - the parts on this layer
  */
+
+import { isValidPart } from './parts.js';
+import { isValidUuid } from '../../uuid-helpers.js';
 
 export { isLayerObject, createLayerObject };
 
@@ -15,18 +17,43 @@ export { isLayerObject, createLayerObject };
  * @returns {boolean} true if the object is a valid layer, false if not
  */
 function isLayerObject(obj) {
-  //TODO: implement
+  if (typeof obj !== 'object') {
+    return false;
+  }
+  const { uuid, name, parts } = obj;
+
+  if (!uuid || !isValidUuid(uuid)) {
+    return false;
+  }
+
+  if (name && typeof name !== 'string') {
+    return false;
+  }
+
+  if (!parts || !Array.isArray(parts) || parts.every(isValidPart)) {
+    return false;
+  }
+
   return true;
 }
 
 /**
  * Creates a layer object with resonable default values
  *
+ * @param {Object} [props] - properties to use when creating the layer
+ * @param {string} [props.name] - optional layer name
+ * @param {string[]} [props.parts] - optional list of parts in this layer
  * @returns {Layer} a layer object
  */
-function createLayerObject() {
+function createLayerObject(props) {
   const uuid = self.crypto.randomUUID();
   const layer = { uuid, parts: [] };
+  if (typeof props?.name === 'string') {
+    layer.name = name;
+  }
+  if (Array.isArray(props?.parts)) {
+    layer.parts.push(...props.parts);
+  }
 
   return layer;
 }
