@@ -15,9 +15,12 @@
  * @property {any} [value] - the parameter value
  */
 
+import getLogger from '../../../util/logger.js';
 import { isValidUuid } from '../../uuid-helpers.js';
 
 export { createPartObject, isValidPart };
+
+const logger = getLogger('model:demodata:script:parts');
 
 /**
  * Creates a Part object.
@@ -31,7 +34,7 @@ function createPartObject(data) {
 
   if (!isValidPart(part)) {
     const errorMessage = `Unable to create a valid part using provided data`;
-    console.error(errorMessage, {
+    logger.error(errorMessage, {
       data,
     });
     throw new Error(errorMessage);
@@ -48,24 +51,24 @@ function createPartObject(data) {
  */
 function isValidPart(obj) {
   if (typeof obj !== 'object') {
-    console.warn(`Invalid part data (not an object)`, { data: obj });
+    logger.warn(`Invalid part data (not an object)`, { data: obj });
     return false;
   }
 
   if (!isValidUuid(obj.uuid)) {
-    console.warn(`Invalid part data, missing or invalid uuid`, { data: obj });
+    logger.warn(`Invalid part data, missing or invalid uuid`, { data: obj });
     return false;
   }
 
   if (!isValidUuid(obj.layer)) {
-    console.warn(`Invalid part data, missing or invalid layer id`, {
+    logger.warn(`Invalid part data, missing or invalid layer id`, {
       data: obj,
     });
     return false;
   }
 
   if (!Number.isInteger(obj.startsAt)) {
-    console.warn(
+    logger.warn(
       `Invalid part data, missing or invalid part start time (${obj.startsAt})`,
       {
         data: obj,
@@ -75,7 +78,7 @@ function isValidPart(obj) {
   }
 
   if (!Number.isInteger(obj.endsAt)) {
-    console.warn(
+    logger.warn(
       `Invalid part data, missing or invalid part end time (${obj.endsAt})`,
       {
         data: obj,
@@ -85,7 +88,7 @@ function isValidPart(obj) {
   }
 
   if (!Array.isArray(obj.parameters)) {
-    console.warn(`Invalid part data, missing or invalid parameters list`, {
+    logger.warn(`Invalid part data, missing or invalid parameters list`, {
       data: obj,
     });
     return false;

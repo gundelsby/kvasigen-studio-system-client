@@ -8,6 +8,11 @@ const colors = {
   background: '282828',
 };
 
+/**
+ * Create a logger
+ *
+ * @param {string} id - module id for this logger
+ */
 export default function getLogger(id) {
   return {
     log: (...args) => {

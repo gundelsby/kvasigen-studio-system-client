@@ -13,6 +13,8 @@ const validPartData = {
   id: 'klovnese',
   layer: FAKE_UUID_VALUE_ALT,
   parameters: [],
+  startsAt: 0,
+  endsAt: 5000,
 };
 
 describe('model:demodata:script:parts', () => {
