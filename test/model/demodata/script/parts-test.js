@@ -66,13 +66,5 @@ describe('model:demodata:script:parts', () => {
 
       assert.equals(expected, part.uuid);
     });
-
-    it('should throw if input is missing layer id', () => {
-      const invalid = { id: 'klovnese', parameters: [] };
-
-      assert.exception(() => {
-        createPartObject(invalid);
-      });
-    });
   });
 });

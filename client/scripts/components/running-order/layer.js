@@ -100,9 +100,9 @@ class Layer extends HTMLElement {
           startsAt,
           endsAt,
         });
-        const { uuid } = api.demodata.script.parts.createPart(partData);
-        // this.parts.add(uuid); //TODO: update layer in store instead, let storeUpdatedHandler take care of the update
-        logger.success(`Added new part ${uuid} for layer ${this.uuid}`);
+        const { uuid: partId } = api.demodata.script.parts.createPart(partData);
+        api.demodata.script.layers.addPartToLayer(this.uuid, partId);
+        logger.success(`Added new part ${partId} for layer ${this.uuid}`);
       }
     } catch (err) {
       logger.error(`Unable to process drop event`, { err });
@@ -114,11 +114,13 @@ class Layer extends HTMLElement {
   }
 
   getPartsFromStore() {
-    const partsFromStore = api.demodata.script.parts.getParts({
-      partProps: { layer: this.uuid },
-    });
     const currentPartsUuids = new Set(this.parts);
-    const storePartsUuids = new Set(partsFromStore.map((p) => p.uuid));
+    const storePartsUuids = new Set(
+      api.demodata.script.layers.getLayer(this.uuid)?.parts || [],
+    );
+    const partsFromStore = Array.from(storePartsUuids).map(
+      api.demodata.script.parts.getPart,
+    );
 
     if (
       storePartsUuids.size === currentPartsUuids.size &&
@@ -126,7 +128,7 @@ class Layer extends HTMLElement {
     ) {
       logger.log(`Parts from store are the same as local parts, not updating`, {
         local: this.parts,
-        store: partsFromStore,
+        store: currentPartsUuids,
       });
       return;
     }
@@ -135,19 +137,31 @@ class Layer extends HTMLElement {
     const partsToAddUuids = storePartsUuids.difference(currentPartsUuids);
     logger.log(`Parts from store are not the same as local parts, updating`, {
       local: this.parts,
-      store: partsFromStore,
+      store: storePartsUuids,
       partsToRemove: partsToRemoveUuids,
       partsToAdd: partsToAddUuids,
     });
 
-    this.removePartElements(partsToRemoveUuids);
+    if (partsToRemoveUuids.size > 0) {
+      this.removePartElements(partsToRemoveUuids);
+    }
+
     this.parts = partsFromStore
       .slice()
       .sort((a, b) => a.startsAt - b.startsAt)
       .map((p) => p.uuid);
-    this.addPartElements(partsToAddUuids);
+    //TODO: reorder part elements after sorting (if order changed)
+
+    if (partsToAddUuids.size > 0) {
+      this.addPartElements(partsToAddUuids);
+    }
   }
 
+  /**
+   * Remove elements for all provided part ids
+   *
+   * @param {Set<string>} partIds
+   */
   removePartElements(partIds) {
     logger.log(`Removing parts...`, { partIds });
     for (const id of partIds) {
@@ -163,7 +177,7 @@ class Layer extends HTMLElement {
 
   /**
    * Adds parts to the internal parts list, creates new html elements for them and does necessary reordering
-   * @param {string[]} partsToAddUuids
+   * @param {Set<string>} partsToAddUuids
    */
   addPartElements(partsToAddUuids) {
     // create elements for new parts
@@ -178,7 +192,9 @@ class Layer extends HTMLElement {
     // insert the new HTML elements using order from this.parts
     for (let i = 0; i < this.parts.length; i++) {
       const uuid = this.parts[i];
-      const newPartElement = newPartElements.find((p) => p.uuid === uuid);
+      const newPartElement = newPartElements.find(
+        (p) => p.dataset.uuid === uuid,
+      );
       if (!newPartElement) {
         // not a new element, nothing to do here
         continue;
@@ -188,6 +204,7 @@ class Layer extends HTMLElement {
       if (i === 0) {
         // this is the new first part
         this.partsRoot.prepend(newPartElement);
+        logger.success(`Inserted element for new part ${uuid}`);
       } else {
         const previousUuid = this.parts[i - 1];
         const elementToInsertAfter = this.partsRoot.querySelector(
@@ -203,26 +220,10 @@ class Layer extends HTMLElement {
           newPartElement,
           elementToInsertAfter.nextSibling,
         );
+        logger.success(`Inserted element for new part ${uuid}`);
       }
     }
   }
-
-  // renderParts() {
-  //   if (this.partsUpdatedSinceLastRender !== true) {
-  //     logger.log(`renderParts() called, but no updates since last render`);
-  //     return;
-  //   }
-
-  //   const partElements = [];
-  //   for (const uuid of this.parts) {
-  //     const partElement = document.createElement(partTagName);
-  //     partElement.dataset.uuid = uuid;
-  //     partElements.push(partElement);
-  //   }
-  //   this.partsRoot.replaceChildren(...partElements);
-  //   this.partsUpdatedSinceLastRender = false;
-  //   logger.log(`renderParts() called, re-rendered parts`, { partElements });
-  // }
 }
 
 customElements.define(tagName, Layer);

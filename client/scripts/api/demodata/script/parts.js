@@ -9,7 +9,6 @@ export default { createPart, getPart, getParts };
  *
  * @param {object} data - part data
  * @param {string} data.id - the engine id of the scene type this part instantiates
- * @param {string} data.layer - the id of the layer this part belongs to
  * @param {number} data.startsAt - part start time in ms from start of the demo
  * @param {number} data.endsAt - part end time in ms from start of the demo
  * @param {PartParameter[]} [data.parameters] - the parameters for this part*

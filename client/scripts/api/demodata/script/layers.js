@@ -3,7 +3,13 @@ import { createLayerObject } from '../../../model/demodata/script/layers.js';
 import partsApi from './parts.js';
 import { store } from '../../../state/store.js';
 
-export default { createLayerWithParts, createLayer, getLayer, getLayers };
+export default {
+  createLayerWithParts,
+  createLayer,
+  getLayer,
+  getLayers,
+  addPartToLayer,
+};
 
 function createLayerWithParts({ parts = [] }) {
   const layer = createLayerObject();
@@ -27,12 +33,17 @@ function createLayerWithParts({ parts = [] }) {
   return layer;
 }
 
+/**
+ * Create a new empty layer
+ *
+ * @returns {import('../../../model/demodata/script/layers.js').Layer}
+ */
 function createLayer() {
   const layer = createLayerObject();
 
   store.dispatch({
     type: actionTypes.demodata.script.layers.ADD_LAYER,
-    payload: layer,
+    payload: { ...layer },
   });
 
   return layer;
@@ -57,4 +68,22 @@ function getLayer(uuid) {
  */
 function getLayers() {
   return store.getState().demoData.script.layers.slice();
+}
+
+/**
+ * Add a part to a layer
+ *
+ * @param {string} layerId
+ * @param {string} partId
+ */
+function addPartToLayer(layerId, partId) {
+  const payload = {
+    layerId,
+    partId,
+  };
+
+  store.dispatch({
+    type: actionTypes.demodata.script.layers.ADD_PART_TO_LAYER,
+    payload,
+  });
 }

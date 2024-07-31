@@ -2,7 +2,6 @@
  * @typedef {Object} Part
  * @property {string} uuid - the part id
  * @property {string} id - the engine id of the scene type this part instantiates
- * @property {string} layer - the id of the layer this part belongs to
  * @property {number} startsAt - part start time in ms from start of the demo
  * @property {number} endsAt - part end time in ms from start of the demo
  * @property {PartParameter[]} parameters - the parameters for this part
@@ -57,13 +56,6 @@ function isValidPart(obj) {
 
   if (!isValidUuid(obj.uuid)) {
     logger.warn(`Invalid part data, missing or invalid uuid`, { data: obj });
-    return false;
-  }
-
-  if (!isValidUuid(obj.layer)) {
-    logger.warn(`Invalid part data, missing or invalid layer id`, {
-      data: obj,
-    });
     return false;
   }
 

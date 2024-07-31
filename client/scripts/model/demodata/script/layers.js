@@ -2,10 +2,9 @@
  * @typedef {Object} Layer
  * @property {string} uuid - the layer id
  * @property {string} [name] - optional layer name
- * @property {import("./parts.js").Part[]} parts - the parts on this layer
+ * @property {string[]} parts - the parts on this layer
  */
 
-import { isValidPart } from './parts.js';
 import { isValidUuid } from '../../uuid-helpers.js';
 
 export { isLayerObject, createLayerObject };
@@ -30,7 +29,7 @@ function isLayerObject(obj) {
     return false;
   }
 
-  if (!parts || !Array.isArray(parts) || parts.every(isValidPart)) {
+  if (!parts || !Array.isArray(parts) || !parts.every(isValidUuid)) {
     return false;
   }
 
