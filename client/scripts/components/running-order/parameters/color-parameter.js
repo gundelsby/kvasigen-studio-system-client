@@ -17,15 +17,18 @@ export default function createColorParameterElement(param) {
   return el;
 }
 
-const template = (name, { r, g, b }) =>
-  html`<p>
+const template = (name, { r, g, b }) => {
+  const rString = r > 0x0f ? r.toString(16) : `0${r.toString(16)}`;
+  const gString = g > 0x0f ? g.toString(16) : `0${g.toString(16)}`;
+  const bString = b > 0x0f ? b.toString(16) : `0${b.toString(16)}`;
+
+  const valueString = `#${rString}${gString}${bString}`;
+
+  return html`<p>
     <span class="name">${name}</span>
-    <input
-      type="color"
-      name="color"
-      value="#${r.toString(16)}${g.toString(16)}${b.toString(16)}"
-    />
+    <input type="color" name="color" value="${valueString}" />
   </p>`;
+};
 
 const styles = ({ r, g, b }) => css`
   :host {
