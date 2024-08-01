@@ -71,7 +71,6 @@ function getStyleTag(rgbaValue) {
 customElements.define(
   tagName,
   class ColorParameter extends HTMLElement {
-    //TODO: Why the fuck is everything reset when new parts are added?
     constructor() {
       super();
 

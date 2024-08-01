@@ -1,4 +1,5 @@
 import api from '../../api/api.js';
+import areDeepEquals from '../../util/deepEquals.js';
 import createParameterElement from './part-parameter.js';
 import getLogger from '../../util/logger.js';
 import getStyleTag from './part-styles.js';
@@ -36,6 +37,7 @@ class Part extends HTMLElement {
   }
 
   disconnectedCallback() {
+    logger.log(`Disconnected`, { uuid: this.uuid });
     for (const unsubscribe of this.unsubCallbacks) {
       unsubscribe();
     }
@@ -48,11 +50,14 @@ class Part extends HTMLElement {
 
   getData() {
     const partData = api.demodata.script.parts.getPart(this.uuid);
-    if (partData) {
+    if (!partData) {
+      logger.warn(`No data found in store for part with uuid ${this.uuid}`);
+      return;
+    }
+
+    if (!areDeepEquals(this.data, partData)) {
       this.data = partData;
       this.dataUpdatedSinceLastRender = true;
-    } else {
-      logger.warn(`No data found in store for part with uuid ${this.uuid}`);
     }
   }
 
