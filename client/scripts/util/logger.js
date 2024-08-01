@@ -14,6 +14,17 @@ const colors = {
  * @param {string} id - module id for this logger
  */
 export default function getLogger(id) {
+  //no-op logger when not in a browser (annoying when running tests)
+  // eslint-disable-next-line no-undef
+  if (!globalThis.window) {
+    return {
+      log: () => {},
+      warn: () => {},
+      error: () => {},
+      success: () => {},
+    };
+  }
+
   return {
     log: (...args) => {
       const { message, leftovers } = parseArgs(args);
