@@ -165,7 +165,7 @@ class Layer extends HTMLElement {
   removePartElements(partIds) {
     logger.log(`Removing parts...`, { partIds });
     for (const id of partIds) {
-      const partElement = this.partsRoot.querySelector(`[data-uuid]=${id}`);
+      const partElement = this.partsRoot.querySelector(`[data-uuid]="${id}"`);
       if (partElement) {
         partElement.remove();
         logger.success(`Removed element for ${id}`);
@@ -208,7 +208,7 @@ class Layer extends HTMLElement {
       } else {
         const previousUuid = this.parts[i - 1];
         const elementToInsertAfter = this.partsRoot.querySelector(
-          `[data-uuid=${previousUuid}]`,
+          `[data-uuid="${previousUuid}"]`,
         );
         if (!elementToInsertAfter) {
           console.error(
