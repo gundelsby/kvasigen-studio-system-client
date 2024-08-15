@@ -118,10 +118,6 @@ class Layer extends HTMLElement {
     const storePartsUuids = new Set(
       api.demodata.script.layers.getLayer(this.uuid)?.parts || [],
     );
-    const partsFromStore = Array.from(storePartsUuids).map(
-      api.demodata.script.parts.getPart,
-    );
-
     if (
       storePartsUuids.size === currentPartsUuids.size &&
       storePartsUuids.symmetricDifference(currentPartsUuids).size === 0
@@ -132,7 +128,6 @@ class Layer extends HTMLElement {
       });
       return;
     }
-
     const partsToRemoveUuids = currentPartsUuids.difference(storePartsUuids);
     const partsToAddUuids = storePartsUuids.difference(currentPartsUuids);
     logger.log(`Parts from store are not the same as local parts, updating`, {
@@ -145,6 +140,10 @@ class Layer extends HTMLElement {
     if (partsToRemoveUuids.size > 0) {
       this.removePartElements(partsToRemoveUuids);
     }
+
+    const partsFromStore = Array.from(storePartsUuids).map(
+      api.demodata.script.parts.getPart,
+    );
 
     this.parts = partsFromStore
       .slice()
@@ -165,7 +164,7 @@ class Layer extends HTMLElement {
   removePartElements(partIds) {
     logger.log(`Removing parts...`, { partIds });
     for (const id of partIds) {
-      const partElement = this.partsRoot.querySelector(`[data-uuid]="${id}"`);
+      const partElement = this.partsRoot.querySelector(`[data-uuid="${id}]"`);
       if (partElement) {
         partElement.remove();
         logger.success(`Removed element for ${id}`);
@@ -211,9 +210,10 @@ class Layer extends HTMLElement {
           `[data-uuid="${previousUuid}"]`,
         );
         if (!elementToInsertAfter) {
-          console.error(
+          logger.error(
             `Unable to insert new part ${uuid}, because the element for the part before it (uuid: ${previousUuid}) can't be found `,
           );
+          continue;
         }
 
         this.partsRoot.insertBefore(
