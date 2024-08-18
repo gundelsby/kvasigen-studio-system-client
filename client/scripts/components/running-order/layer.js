@@ -48,15 +48,6 @@ class Layer extends HTMLElement {
     this.addEventListener('drop', this.dropHandler.bind(this));
 
     this.getPartsFromStore();
-
-    // render parts
-    const partElements = [];
-    for (const uuid of this.parts) {
-      const partElement = document.createElement(partTagName);
-      partElement.dataset.uuid = uuid;
-      partElements.push(partElement);
-    }
-    this.partsRoot.append(...partElements);
   }
 
   disconnectedCallback() {
@@ -149,7 +140,7 @@ class Layer extends HTMLElement {
       .slice()
       .sort((a, b) => a.startsAt - b.startsAt)
       .map((p) => p.uuid);
-    //TODO: reorder part elements after sorting (if order changed)
+    //TODO: reorder existing part elements after sorting (if order changed)
 
     if (partsToAddUuids.size > 0) {
       this.addPartElements(partsToAddUuids);
