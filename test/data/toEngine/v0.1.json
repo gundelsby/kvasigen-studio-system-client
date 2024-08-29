@@ -14,7 +14,7 @@
           {
             "name": "color",
             "type": "float4",
-            "value": [0.0, 1.0, 0.5, 1.0]
+            "values": [{ "timecode": 0, "value": [0.0, 1.0, 0.5, 1.0] }]
           }
         ]
       },
@@ -27,7 +27,7 @@
           {
             "name": "color",
             "type": "float4",
-            "value": [0.7, 1.0, 0.5, 1.0]
+            "values": [{ "timecode": 0, "value": [[0.7, 1.0, 0.5, 1.0]] }]
           }
         ]
       }
