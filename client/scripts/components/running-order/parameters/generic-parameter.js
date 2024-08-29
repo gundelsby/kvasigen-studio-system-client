@@ -17,6 +17,7 @@ customElements.define(tagName, GenericPartParameterComponent);
  * @returns {HTMLElement}
  */
 function createGenericParameterElement(parameter) {
+  //TODO: value -> values, create paramater in datastore via API
   const { name, type, usedFor, canAutomate, value } = parameter;
 
   const nameEl = document.createElement('p');

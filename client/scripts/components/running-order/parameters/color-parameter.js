@@ -8,6 +8,8 @@ const defaultColorValue = { r: 122, g: 73, b: 11, a: 255 };
  * @returns {HTMLElement}
  */
 export default function createColorParameterElement(param) {
+  //TODO: value -> values, create paramater in datastore via API, only use data-uuid in factory function
+
   const el = document.createElement(tagName);
   el.dataset.name = param.name;
   if (param.value) {
