@@ -5,13 +5,6 @@
  * @property {number} startsAt - part start time in ms from start of the demo
  * @property {number} endsAt - part end time in ms from start of the demo
  * @property {PartParameter[]} parameters - the parameters for this part
- *
- * @typedef {Object} PartParameter
- * @property {string} name - parameter name
- * @property {string} type - data type for parameter
- * @property {string} [usedFor] - intended usage for parameter
- * @property {boolean} [canAutomate] - defines whether the parameter's value is static for the part or can be automated
- * @property {any} [value] - the parameter value
  */
 
 import getLogger from '../../../util/logger.js';
