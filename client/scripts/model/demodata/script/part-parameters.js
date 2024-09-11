@@ -11,7 +11,16 @@
  * @property {any} value - parameter value
  */
 
-export { createPartParameterObject, isValidPartParameter };
+import getLogger from '../../../util/logger.js';
+import { isValidUuid } from '../../uuid-helpers.js';
+
+export {
+  createPartParameterObject,
+  isValidPartParameter,
+  isValidPartParameterValue,
+};
+
+const logger = getLogger('model:demodata:script:parts:part-parameters');
 
 /**
  * Creates a PartParamater object
@@ -21,7 +30,10 @@ export { createPartParameterObject, isValidPartParameter };
  */
 function createPartParameterObject(data) {
   if (!data || typeof data !== 'object') {
-    throw new Error(`Invalid input, not an object`);
+    const errorMessage =
+      'Unable to create a valid part parameter using provided data (not an object)';
+    logger.error(errorMessage, { data });
+    throw new Error(errorMessage);
   }
 
   const uuid = self.crypto.randomUUID();
@@ -31,6 +43,13 @@ function createPartParameterObject(data) {
     { uuid, values: [] },
     { name, type, usedFor, canAutomate },
   );
+
+  if (!isValidPartParameter(partParameter)) {
+    const errorMessage =
+      'Unable to create a valid part parameter using provided data';
+    logger.error(errorMessage, { data });
+    throw new Error(errorMessage);
+  }
 
   return partParameter;
 }
@@ -42,5 +61,49 @@ function createPartParameterObject(data) {
  * @returns {boolean}
  */
 function isValidPartParameter(obj) {
+  if (!isValidUuid(obj?.uuid)) {
+    return false;
+  }
+
+  if (!obj.name || typeof obj.name !== 'string') {
+    return false;
+  }
+
+  if (!obj.type || typeof obj.type !== 'string') {
+    return false;
+  }
+
+  if (
+    obj.usedFor !== undefined &&
+    (typeof obj.usedFor !== 'string' || obj.usedFor === '')
+  ) {
+    return false;
+  }
+
+  if (obj.canAutomate !== undefined && typeof obj.canAutomate !== 'boolean') {
+    return false;
+  }
+
+  if (
+    !Array.isArray(obj.values) ||
+    !obj.values.every(isValidPartParameterValue)
+  ) {
+    return false;
+  }
+
   return true;
+}
+
+/**
+ * Checks if an object is a valid PartParameterValue
+ *
+ * @param {*} obj - object to check
+ * @returns {boolean}
+ */
+function isValidPartParameterValue(obj) {
+  if (!Number.isInteger(obj?.timecode) || obj.timecode < 0) {
+    return false;
+  }
+
+  return obj.value !== undefined && obj.value !== null;
 }
