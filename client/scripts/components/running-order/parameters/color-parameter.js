@@ -1,5 +1,7 @@
 import { css, html } from '../../../util/syntax-helpers.js';
 
+export { tagName, createColorParameterElement };
+
 const tagName = 'part-color-parameter';
 const defaultColorValue = { r: 122, g: 73, b: 11, a: 255 };
 /**
@@ -7,7 +9,7 @@ const defaultColorValue = { r: 122, g: 73, b: 11, a: 255 };
  * @param {import('../../../model/demodata/script/parts.js').PartParameter} param
  * @returns {HTMLElement}
  */
-export default function createColorParameterElement(param) {
+function createColorParameterElement(param) {
   //TODO: value -> values, create paramater in datastore via API, only use data-uuid in factory function
 
   const el = document.createElement(tagName);

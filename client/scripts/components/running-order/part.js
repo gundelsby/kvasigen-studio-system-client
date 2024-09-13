@@ -1,9 +1,14 @@
 import api from '../../api/api.js';
 import areDeepEquals from '../../util/deepEquals.js';
-import createParameterElement from './part-parameter.js';
+import getTagNameForPartParameter from './part-parameter.js';
 import getLogger from '../../util/logger.js';
 import getStyleTag from './part-styles.js';
 import { store } from '../../state/store.js';
+import {
+  addNewOrderedElements,
+  removeElements,
+} from '../util/elementListHelpers.js';
+import { getPartParameter } from '../../api/demodata/script/part-parameters.js';
 
 const tagName = `ro-part`;
 
@@ -12,7 +17,6 @@ export { tagName };
 const logger = getLogger(`component:${tagName}`);
 
 class Part extends HTMLElement {
-  //TODO: the part needs to keep track of its parameter values *OR* parameters must be in the store
   constructor() {
     super();
 
@@ -55,22 +59,49 @@ class Part extends HTMLElement {
       return;
     }
 
-    if (!areDeepEquals(this.data, partData)) {
-      this.data = partData;
-      this.dataUpdatedSinceLastRender = true;
-    }
-  }
-
-  render() {
-    if (this.dataUpdatedSinceLastRender !== true) {
+    if (areDeepEquals(this.data, partData)) {
+      logger.log(
+        `Part data in store is equal to part data in element, not updating`,
+      );
       return;
     }
 
+    const currentParameterSet = new Set(this.data.parameters);
+    const storeParameterSet = new Set(partData.parameters);
+    if (
+      currentParameterSet.size !== storeParameterSet.size &&
+      currentParameterSet.symmetricDifference(storeParameterSet).size > 0
+    ) {
+      const parametersToRemove =
+        currentParameterSet.difference(storeParameterSet);
+      const parametersToAdd = storeParameterSet.difference(currentParameterSet);
+
+      if (parametersToRemove.size > 0) {
+        removeElements(parametersToRemove, this.paramsContainer);
+      }
+
+      if (parametersToAdd.size > 0) {
+        addNewOrderedElements(
+          parametersToAdd,
+          Array.from(storeParameterSet),
+          this.paramsContainer,
+          null,
+          getTagNameForPartParameter,
+        );
+      }
+    }
+
+    this.data = partData;
+  }
+
+  render() {
     const { id, parameters } = this.data;
     const idElement = document.createElement('p');
     idElement.classList.add('scene-type');
     idElement.textContent = `${id}`;
-    const paramElements = parameters.map(createParameterElement);
+
+    //TODO: rewrite to avoid re-rendering of existing parameter elements
+    const paramElements = parameters.map(getTagNameForPartParameter);
 
     const paramsContainer = document.createElement('div');
     paramsContainer.classList.add('parameters');

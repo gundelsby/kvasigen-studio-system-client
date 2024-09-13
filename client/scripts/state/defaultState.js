@@ -10,6 +10,7 @@ export default {
     script: {
       layers: [],
       parts: [],
+      partParameters: [],
     },
   },
 };

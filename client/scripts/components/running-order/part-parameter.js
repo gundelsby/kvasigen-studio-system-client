@@ -1,18 +1,25 @@
-import createColorParameterElement from './parameters/color-parameter.js';
-import { createGenericParameterElement } from './parameters/generic-parameter.js';
+import { tagName as colorParamTagName } from './parameters/color-parameter.js';
+import { tagName as genericParamTagName } from './parameters/generic-parameter.js';
+import { getPartParameter } from '../../api/demodata/script/part-parameters.js';
 
 /**
- * Create a part parameter custom element from a PartParameter object. Type of
- * parameter element returned is decided based upon the parameter properties.
+ * Decides and returns the appropriate element name for the part parameter
+ * defined by the given uuid
  *
- * @param {import("../../model/demodata/script/parts.js").PartParameter} parameter - parameter to create element for
- * @returns {HTMLElement}
+ * @param {import("../../model/demodata/script/parts.js").PartParameter} uuid - parameter to create element for
+ * @returns {string}
  */
-export default function createParameterElement(parameter) {
+export default function getTagNameForPartParameter(uuid) {
+  const parameter = getPartParameter(uuid);
+
+  if (!parameter) {
+    return null;
+  }
+
   switch (parameter.usedFor) {
     case 'color':
-      return createColorParameterElement(parameter);
+      return colorParamTagName;
     default:
-      return createGenericParameterElement(parameter);
+      return genericParamTagName;
   }
 }

@@ -2,7 +2,7 @@ import actionTypes from '../../../state/action-types.js';
 import { createPartParameterObject } from '../../../model/demodata/script/part-parameters.js';
 import { store } from '../../../state/store.js';
 
-export { createPartParameter, updatePartParameterValues };
+export { createPartParameter, getPartParameter, updatePartParameterValues };
 
 /**
  * Create a part parameter object and add it to the data store
@@ -21,7 +21,19 @@ function createPartParameter(data) {
 }
 
 /**
- * Update values for an existing part parameter datastore object
+ * Gets a part parameter from the data store
+ *
+ * @param {string} uuid - uuid of the part parameter to get
+ * @returns {import('../../../model/demodata/script/part-parameters.js').PartParameter}
+ */
+function getPartParameter(uuid) {
+  return store
+    .getState()
+    .demodata.script.partParameters.find((p) => p.uuid === uuid);
+}
+
+/**
+ * Update values for an existing part parameter data store object
  *
  * @param {string} uuid
  * @param {import('../../../model/demodata/script/part-parameters.js').PartParameterValue[l]} values
