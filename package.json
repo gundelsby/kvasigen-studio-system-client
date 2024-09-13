@@ -5,7 +5,8 @@
   "main": "client/index.html",
   "type": "module",
   "scripts": {
-    "start": "static ./client",
+    "start:open": "static ./client -a 0.0.0.0",
+    "start:localhost": "static ./client",
     "test": "mocha \"./test/**/*-test.js\"",
     "test:watch": "npm run test -- --experimental-require-module -w --reporter min"
   },
