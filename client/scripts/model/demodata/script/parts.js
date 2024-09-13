@@ -22,7 +22,7 @@ const logger = getLogger('model:demodata:script:parts');
  */
 function createPartObject(data) {
   const uuid = self.crypto.randomUUID();
-  const part = Object.assign({}, { uuid, parameters: [] }, data);
+  const part = Object.assign({}, { uuid, parameters: [] }, { ...data });
 
   if (!isValidPart(part)) {
     const errorMessage = `Unable to create a valid part using provided data`;

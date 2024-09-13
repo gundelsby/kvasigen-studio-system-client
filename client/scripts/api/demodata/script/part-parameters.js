@@ -29,7 +29,7 @@ function createPartParameter(data) {
 function getPartParameter(uuid) {
   return store
     .getState()
-    .demodata.script.partParameters.find((p) => p.uuid === uuid);
+    .demoData.script.partParameters.find((p) => p.uuid === uuid);
 }
 
 /**

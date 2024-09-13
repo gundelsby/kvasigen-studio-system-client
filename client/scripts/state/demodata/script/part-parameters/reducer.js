@@ -17,7 +17,11 @@ export default function partParametersReducer(partParameters = [], action) {
   switch (action.type) {
     case actionTypes.ADD_PART_PARAMETER:
       try {
-        partParameters.push(createPartParameterObject(action.payload));
+        partParameters.push(
+          action.payload.uuid
+            ? action.payload
+            : createPartParameterObject(action.payload),
+        );
         logger.log('Added new part parameter', {
           partParameter: partParameters.at(-1),
         });

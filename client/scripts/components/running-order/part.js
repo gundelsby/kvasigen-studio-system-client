@@ -1,20 +1,23 @@
-import api from '../../api/api.js';
-import areDeepEquals from '../../util/deepEquals.js';
-import getTagNameForPartParameter from './part-parameter.js';
-import getLogger from '../../util/logger.js';
-import getStyleTag from './part-styles.js';
-import { store } from '../../state/store.js';
 import {
   addNewOrderedElements,
   removeElements,
 } from '../util/elementListHelpers.js';
-import { getPartParameter } from '../../api/demodata/script/part-parameters.js';
+import api from '../../api/api.js';
+import areDeepEquals from '../../util/deepEquals.js';
+import getLogger from '../../util/logger.js';
+import getStyleTag from './part-styles.js';
+import getTagNameForPartParameter from './part-parameter.js';
+import { store } from '../../state/store.js';
 
 const tagName = `ro-part`;
 
 export { tagName };
 
 const logger = getLogger(`component:${tagName}`);
+
+const classNames = {
+  ID_ELEMENT: 'scene-type',
+};
 
 class Part extends HTMLElement {
   constructor() {
@@ -23,6 +26,14 @@ class Part extends HTMLElement {
     this.unsubCallbacks = [];
 
     this.partDataRoot = document.createElement('div');
+
+    const idElement = document.createElement('p');
+    idElement.classList.add(classNames.ID_ELEMENT);
+
+    this.paramsContainer = document.createElement('div');
+    this.paramsContainer.classList.add('parameters');
+
+    this.partDataRoot.append(idElement, this.paramsContainer);
 
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.append(getStyleTag(), this.partDataRoot);
@@ -37,7 +48,6 @@ class Part extends HTMLElement {
     );
 
     this.getData();
-    this.render();
   }
 
   disconnectedCallback() {
@@ -49,7 +59,6 @@ class Part extends HTMLElement {
 
   storeUpdatedHandler() {
     this.getData();
-    this.render();
   }
 
   getData() {
@@ -66,7 +75,7 @@ class Part extends HTMLElement {
       return;
     }
 
-    const currentParameterSet = new Set(this.data.parameters);
+    const currentParameterSet = new Set(this.data?.parameters || []);
     const storeParameterSet = new Set(partData.parameters);
     if (
       currentParameterSet.size !== storeParameterSet.size &&
@@ -91,28 +100,10 @@ class Part extends HTMLElement {
       }
     }
 
+    this.partDataRoot.querySelector(`.${classNames.ID_ELEMENT}`).textContent =
+      partData.id;
+
     this.data = partData;
-  }
-
-  render() {
-    const { id, parameters } = this.data;
-    const idElement = document.createElement('p');
-    idElement.classList.add('scene-type');
-    idElement.textContent = `${id}`;
-
-    //TODO: rewrite to avoid re-rendering of existing parameter elements
-    const paramElements = parameters.map(getTagNameForPartParameter);
-
-    const paramsContainer = document.createElement('div');
-    paramsContainer.classList.add('parameters');
-    paramsContainer.append(...paramElements);
-
-    this.partDataRoot.replaceChildren(idElement, paramsContainer);
-
-    this.dataUpdatedSinceLastRender = false;
-    logger.success(`render(): Rendered part ${this.uuid}`, {
-      innerHTML: this.innerHTML,
-    });
   }
 }
 

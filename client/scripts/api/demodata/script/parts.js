@@ -1,5 +1,6 @@
 import actionTypes from '../../../state/action-types.js';
 import { createPartObject } from '../../../model/demodata/script/parts.js';
+import { createPartParameter } from './part-parameters.js';
 import { store } from '../../../state/store.js';
 
 export default { createPart, getPart, getParts };
@@ -11,12 +12,15 @@ export default { createPart, getPart, getParts };
  * @param {string} data.id - the engine id of the scene type this part instantiates
  * @param {number} data.startsAt - part start time in ms from start of the demo
  * @param {number} data.endsAt - part end time in ms from start of the demo
- * @param {PartParameter[]} [data.parameters] - the parameters for this part*
+ * @param {PartParameter[]} [data.parameters] - the parameters for this part
  *
  *
  * @returns {import('../../../model/demodata/script/parts.js').Part}
  */
 function createPart(data) {
+  data.parameters =
+    data?.parameters?.map((p) => createPartParameter(p).uuid) || [];
+
   const part = createPartObject(data);
   store.dispatch({
     type: actionTypes.demodata.script.parts.ADD_PART,
