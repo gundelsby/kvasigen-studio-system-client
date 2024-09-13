@@ -1,5 +1,6 @@
 /**
  * @typedef {Object} PartParameter
+ * @property {string} uuid - uuid
  * @property {string} name - parameter name
  * @property {string} type - data type for parameter
  * @property {string} [usedFor] - intended usage for parameter
