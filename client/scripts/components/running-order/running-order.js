@@ -1,3 +1,7 @@
+import {
+  addNewOrderedElements,
+  removeElements,
+} from '../util/elementListHelpers.js';
 import api from '../../api/api.js';
 import getLogger from '../../util/logger.js';
 import { html } from '../../util/syntax-helpers.js';
@@ -96,86 +100,19 @@ class RunningOrder extends HTMLElement {
     });
 
     if (layersToRemove.size > 0) {
-      this.removeLayerElements(layersToRemove);
+      removeElements(layersToRemove, this.layersRoot);
     }
 
     this.layers = Array.from(storeLayers);
     //TODO: reorder existing layer elements if order changed
 
     if (layersToAdd.size > 0) {
-      this.addLayerElements(layersToAdd);
-    }
-  }
-
-  /**
-   * Remove elements for all provided layer ids
-   *
-   * @param {Set<string>} layerIds
-   */
-  removeLayerElements(layerIds) {
-    logger.log(`Removing parts...`, { layerIds: Array.from(layerIds) });
-    for (const id of layerIds) {
-      const layerElement = this.layersRoot.querySelector(`[data-uuid]="${id}"`);
-      if (layerElement) {
-        layerElement.remove();
-        logger.success(`Removed element for ${id}`);
-      } else {
-        logger.warn(`Unable to find element for ${id}, not removed`);
-      }
-    }
-  }
-
-  /**
-   * Creates and inserts layer elements for the provided layer id
-   * @param {Set<string>} layerIds
-   */
-  addLayerElements(layerIds) {
-    logger.log(`Adding new layer elements`, {
-      newLayers: Array.from(layerIds),
-    });
-    const newLayerElements = [];
-    for (const layerId of layerIds) {
-      const layerElement = document.createElement(layerTagName);
-      layerElement.dataset.uuid = layerId;
-      newLayerElements.push(layerElement);
-    }
-
-    for (let i = 0; i < this.layers.length; i++) {
-      const layerId = this.layers[i];
-      const newLayerElement = newLayerElements.find(
-        (el) => el.dataset.uuid === layerId,
+      addNewOrderedElements(
+        layersToAdd,
+        this.layers.slice(),
+        this.layersRoot,
+        layerTagName,
       );
-      if (!newLayerElement) {
-        continue;
-      }
-
-      if (i === 0) {
-        this.layersRoot.prepend(newLayerElement);
-        continue;
-      }
-
-      const previousLayerId = this.layers[i - 1];
-      const elementToInsertAfter = this.layersRoot.querySelector(
-        `[data-uuid="${previousLayerId}"]`,
-      );
-      if (!elementToInsertAfter) {
-        logger.error(
-          `Unable to insert new layer ${layerId}, because the element for the part before it (${previousLayerId}) can not be found`,
-        );
-        continue;
-      }
-
-      logger.log(`Inserting new element`, {
-        newLayerElement,
-        elementToInsertAfter,
-        elementToInsertBefore: elementToInsertAfter.nextSibling,
-      });
-
-      this.layersRoot.insertBefore(
-        newLayerElement,
-        elementToInsertAfter.nextSibling,
-      );
-      logger.success(`Inserted element for new layer ${layerId}`);
     }
   }
 

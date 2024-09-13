@@ -1,3 +1,7 @@
+import {
+  addNewOrderedElements,
+  removeElements,
+} from '../util/elementListHelpers.js';
 import api from '../../api/api.js';
 import getLogger from '../../util/logger.js';
 import getStyleTag from './layer-styles.js';
@@ -31,7 +35,7 @@ class Layer extends HTMLElement {
 
   connectedCallback() {
     this.unsubCallbacks.push(
-      store.subscribe(this.storeUpdatedHandler.bind(this)),
+      store.subscribe(this.getPartsFromStore.bind(this)),
     );
     this.uuid = this.dataset.uuid;
     logger.log(`Connected ${this.uuid}`);
@@ -100,10 +104,6 @@ class Layer extends HTMLElement {
     }
   }
 
-  storeUpdatedHandler() {
-    this.getPartsFromStore();
-  }
-
   getPartsFromStore() {
     const currentPartsUuids = new Set(this.parts);
     const storePartsUuids = new Set(
@@ -129,7 +129,7 @@ class Layer extends HTMLElement {
     });
 
     if (partsToRemoveUuids.size > 0) {
-      this.removePartElements(partsToRemoveUuids);
+      removeElements(partsToRemoveUuids, this.partsRoot);
     }
 
     const partsFromStore = Array.from(storePartsUuids).map(
@@ -143,76 +143,12 @@ class Layer extends HTMLElement {
     //TODO: reorder existing part elements after sorting (if order changed)
 
     if (partsToAddUuids.size > 0) {
-      this.addPartElements(partsToAddUuids);
-    }
-  }
-
-  /**
-   * Remove elements for all provided part ids
-   *
-   * @param {Set<string>} partIds
-   */
-  removePartElements(partIds) {
-    logger.log(`Removing parts...`, { partIds });
-    for (const id of partIds) {
-      const partElement = this.partsRoot.querySelector(`[data-uuid="${id}]"`);
-      if (partElement) {
-        partElement.remove();
-        logger.success(`Removed element for ${id}`);
-      } else {
-        logger.warn(`Unable to find element for ${id}, not removed`);
-      }
-    }
-  }
-
-  /**
-   * Adds parts to the internal parts list, creates new html elements for them and does necessary reordering
-   * @param {Set<string>} partsToAddUuids
-   */
-  addPartElements(partsToAddUuids) {
-    // create elements for new parts
-    const newPartElements = [];
-
-    for (const uuid of partsToAddUuids) {
-      const partElement = document.createElement(partTagName);
-      partElement.dataset.uuid = uuid;
-      newPartElements.push(partElement);
-    }
-
-    // insert the new HTML elements using order from this.parts
-    for (let i = 0; i < this.parts.length; i++) {
-      const uuid = this.parts[i];
-      const newPartElement = newPartElements.find(
-        (p) => p.dataset.uuid === uuid,
+      addNewOrderedElements(
+        partsToAddUuids,
+        this.parts.slice(),
+        this.partsRoot,
+        partTagName,
       );
-      if (!newPartElement) {
-        // not a new element, nothing to do here
-        continue;
-      }
-
-      // this uuid represents a new part that needs its element inserted into the dom
-      if (i === 0) {
-        // this is the new first part
-        this.partsRoot.prepend(newPartElement);
-        logger.success(`Inserted element for new part ${uuid}`);
-      } else {
-        const previousUuid = this.parts[i - 1];
-        const elementToInsertAfter = this.partsRoot.querySelector(
-          `[data-uuid="${previousUuid}"]`,
-        );
-        if (!elementToInsertAfter) {
-          logger.error(
-            `Unable to insert new part ${uuid}, because the element for the part before it (uuid: ${previousUuid}) can't be found `,
-          );
-          continue;
-        }
-
-        this.partsRoot.insertBefore(
-          newPartElement,
-          elementToInsertAfter.nextSibling,
-        );
-        logger.success(`Inserted element for new part ${uuid}`);
-      }
     }
   }
 }
