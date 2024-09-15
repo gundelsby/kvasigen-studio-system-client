@@ -36,7 +36,7 @@ function getPartParameter(uuid) {
  * Update values for an existing part parameter data store object
  *
  * @param {string} uuid
- * @param {import('../../../model/demodata/script/part-parameters.js').PartParameterValue[l]} values
+ * @param {import('../../../model/demodata/script/part-parameters.js').PartParameterValue[]} values
  */
 function updatePartParameterValues(uuid, values) {
   store.dispatch({
