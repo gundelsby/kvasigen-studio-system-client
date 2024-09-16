@@ -49,11 +49,13 @@ function addNewOrderedElements(
   tagName,
   tagNameResolver,
 ) {
-  // create elements for new parts
-  const newPartElements = [];
-
-  //TODO: this is an uncessary loop, elements can be created on the fly
-  for (const uuid of newElementUuids) {
+  // insert the new HTML elements using order from parts
+  for (let i = 0; i < allElementUuids.length; i++) {
+    const uuid = allElementUuids[i];
+    if (!newElementUuids.has(uuid)) {
+      // not a new element, nothing to do here
+      continue;
+    }
     const resolvedTagName = tagName
       ? tagName
       : typeof tagNameResolver === 'function' && tagNameResolver(uuid);
@@ -66,20 +68,8 @@ function addNewOrderedElements(
       continue;
     }
 
-    const partElement = document.createElement(resolvedTagName);
-    partElement.dataset.uuid = uuid;
-    newPartElements.push(partElement);
-  }
-
-  // insert the new HTML elements using order from parts
-  for (let i = 0; i < allElementUuids.length; i++) {
-    const uuid = allElementUuids[i];
-    const newPartElement = newPartElements.find((p) => p.dataset.uuid === uuid);
-    //TODO: check uuid list instead and create element if necessary or continue if not
-    if (!newPartElement) {
-      // not a new element, nothing to do here
-      continue;
-    }
+    const newPartElement = document.createElement(resolvedTagName);
+    newPartElement.dataset.uuid = uuid;
 
     if (i === 0) {
       // this is the new first part
