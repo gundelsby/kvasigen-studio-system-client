@@ -87,9 +87,12 @@ customElements.define(
     changeUpdateHandler(event) {
       const { value } = event.target;
 
-      //TODO: add alpha channel when type dictates it (eg. vec4)
-      this.values[0].value = value;
-      //TODO: update border-color css prop
+      // manually update border-color
+      this.contentRoot
+        .querySelector(`input[name="${elementNames.COLOR_INPUT}"]`)
+        .style.setProperty('border-color', value);
+
+      this.values[0].value = inputValueStringToRgbaObject(value);
       updatePartParameterValues(this.uuid, this.values.slice());
     }
 
@@ -105,4 +108,15 @@ function rgbToInputValueString({ r, g, b }) {
   const bString = b > 0x0f ? b.toString(16) : `0${b.toString(16)}`;
 
   return `#${rString}${gString}${bString}`;
+}
+
+function inputValueStringToRgbaObject(valueString) {
+  const [, r, g, b] = /#(.{2})(.{2})(.{2})/.exec(valueString);
+
+  return {
+    r: Number.parseInt(r, 16) / 0xff,
+    g: Number.parseInt(g, 16) / 0xff,
+    b: Number.parseInt(b, 16) / 0xff,
+    a: 1.0,
+  };
 }
