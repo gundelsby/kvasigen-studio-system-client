@@ -4,30 +4,68 @@
     "bpm": 168
   },
   "script": {
-    "scenes": [
+    "layers": [
       {
-        "id": "Klovnenese",
-        "name": "Klovnese",
-        "start-timecode": 0,
-        "stop-timecode": 10000,
-        "parameters": [
+        "name": "main",
+        "parts": [
           {
-            "name": "color",
-            "type": "float4",
-            "values": [{ "timecode": 0, "value": [0.0, 1.0, 0.5, 1.0] }]
+            "id": "Klovnenese",
+            "name": "Klovnese",
+            "start-timecode": 0,
+            "stop-timecode": 10000,
+            "parameters": [
+              {
+                "name": "color",
+                "type": "float4",
+                "values": [{ "timecode": 0, "value": [0.0, 1.0, 0.5, 1.0] }]
+              }
+            ]
+          },
+          {
+            "id": "Klovnenese",
+            "name": "Klavernese",
+            "start-timecode": 10000,
+            "stop-timecode": 25000,
+            "parameters": [
+              {
+                "name": "color",
+                "type": "float4",
+                "values": [{ "timecode": 0, "value": [0.7, 1.0, 0.5, 1.0] }]
+              }
+            ]
           }
         ]
       },
       {
-        "id": "Klovnenese",
-        "name": "Klavernese",
-        "start-timecode": 10000,
-        "stop-timecode": 25000,
-        "parameters": [
+        "name": "text overlays",
+        "parts": [
           {
-            "name": "color",
-            "type": "float4",
-            "values": [{ "timecode": 0, "value": [0.7, 1.0, 0.5, 1.0] }]
+            "id": "credits",
+            "name": "music credit",
+            "start-timecode": 5000,
+            "stop-timecode": 15000,
+            "parameters": [
+              {
+                "name": "role",
+                "type": "text",
+                "values": [{ "timecode": 0, "text": "music" }]
+              },
+              {
+                "name": "credit",
+                "type": "text",
+                "values": [{ "timecode": 0, "text": "lug00ber" }]
+              },
+              {
+                "name": "fade-in",
+                "type": "timing",
+                "values": [{ "timecode": 0 }, { "timecode": 1000 }]
+              },
+              {
+                "name": "fade-out",
+                "type": "timing",
+                "values": [{ "timecode": 9000 }, { "timecode": 10000 }]
+              }
+            ]
           }
         ]
       }
