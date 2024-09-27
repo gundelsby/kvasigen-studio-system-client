@@ -1,7 +1,7 @@
 import createExportJson from '../demodata/export.js';
 import noc from '../../network/noc.js';
 
-export { exportDemoDataToEngine };
+export default { exportDemoDataToEngine };
 
 /**
  * Creates an export of the current demodata state and sends it to the engine
