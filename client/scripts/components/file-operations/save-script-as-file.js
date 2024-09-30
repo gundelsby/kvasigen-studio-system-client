@@ -3,9 +3,9 @@ import { html } from '../../util/syntax-helpers.js';
 
 const tagName = `file-operations-save-script-file`;
 
-const template = (url) => html`
+const template = html`
   <div>
-    <a download="${url}">Save script as file</a>
+    <button>Save script as file</button>
   </div>
 `;
 
@@ -16,28 +16,33 @@ customElements.define(
       super();
 
       this.attachShadow({ mode: 'open' });
-      this.shadowRoot.innerHTML = template(null);
-      this.anchor = this.shadowRoot.querySelector('a');
+      this.shadowRoot.innerHTML = template;
+      this.button = this.shadowRoot.querySelector('button');
     }
 
     connectedCallback() {
-      this.anchor.addEventListener('click', () => {
-        if (!this.anchor.getAttribute('download')) {
-          const json = api.demodata.createExportJson();
-          const url = URL.createObjectURL(new Blob([JSON.stringify(json)]), {
-            type: 'application/json',
-          });
-          this.anchor.setAttribute('download', url);
-          this.anchor.click();
-        } else {
-          setTimeout(() => {
-            const url = this.anchor.getAttribute('download');
-            this.anchor.setAttribute('download', '');
-            URL.revokeObjectURL(url);
-          }, 1000);
-        }
+      this.button.addEventListener('click', () => {
+        const json = api.demodata.createExportJson();
+        const url = URL.createObjectURL(new Blob([JSON.stringify(json)]), {
+          type: 'application/json',
+        });
+
+        const filename = `${getFormattedNowDateTime()}-${json.global.title}.json`;
+
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.click();
+
+        URL.revokeObjectURL(anchor.href);
       });
     }
   },
   {},
 );
+
+function getFormattedNowDateTime() {
+  const iso = new Date().toISOString();
+
+  return `${iso.substring(0, 10)}-${iso.substring(11, 23)}`;
+}
